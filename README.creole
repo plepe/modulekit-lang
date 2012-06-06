@@ -1,0 +1,2 @@
+== MODULEKIT-LANG ==
+A translation library for use with Modulekit.
