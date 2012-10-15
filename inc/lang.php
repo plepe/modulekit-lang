@@ -133,15 +133,15 @@ if($data_lang=="auto")
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
-  global $plugins_list;
+  global $modulekit;
 
   $lang_str=array();
 
   @include_once("lang/{$lang}.php");
   @include_once("lang/lang_{$lang}.php");
   @include_once("lang/tags_{$lang}.php");
-  foreach($plugins_list as $plugin=>$dummy) {
-    @include_once("plugins/$plugin/lang_{$lang}.php");
+  foreach($modulekit['order'] as $module) {
+    @include_once(modulekit_file($module, "lang_{$lang}.php"));
   }
   $loaded[]=$lang;
 
