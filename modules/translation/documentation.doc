@@ -1,0 +1,9 @@
+git fetch dev@gnomi.cg.tuwien.ac.at:data/translation
+git merge --no-commit FETCH_HEAD
+git log --stat FETCH_HEAD..HEAD -- lang/*en.php plugins/*/lang_en.php
+  check if any lang_strings got moved or renamed
+
+www/scripts/move_lang_str
+www/scripts/rename_lang_str
+
+git commit -a
