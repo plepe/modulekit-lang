@@ -105,6 +105,14 @@ function lang_from_browser($avail_langs=null) {
   return $chosen_lang;
 }
 
+if(!isset($ui_langs)) {
+  $ui_langs=modulekit_loaded("");
+  if(isset($ui_langs['languages']))
+    $ui_langs=$ui_langs['languages'];
+  else
+    $ui_langs=array();
+}
+
 if(isset($_REQUEST['ui_lang']))
   $ui_lang=$_REQUEST['ui_lang'];
 if(!isset($ui_lang)&&
