@@ -1,6 +1,29 @@
 <?
 global $translation_path;
 
+// call translation_git_cmd without the git command, e.g.
+// translation_git_cmd("commit -a");
+// optionally you can supply a path in which the command should be
+// executed. Default: current working directory
+function translation_git_cmd($cmd, $path=null) {
+  $ret="";
+
+  if($path!==null) {
+    $cwd=getcwd();
+    chdir($path);
+  }
+
+  $p=popen("git $cmd", "r");
+  while($r=fgets($p))
+    $ret.=$r;
+  pclose($p);
+
+  if($path!==null)
+    chdir($cwd);
+
+  return $ret;
+}
+
 function translation_init() {
   global $root_path;
   global $translation_path;
@@ -10,10 +33,8 @@ function translation_init() {
     if(!mkdir($translation_path)) {
       print "Error creating translation path '$translation_path'\n";
     }
-    chdir($translation_path);
-    $p=popen("git clone $root_path $translation_path", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+
+    translation_git_cmd("clone $root_path $translation_path", $translation_path);
   }
 }
 
@@ -115,10 +136,7 @@ class translation {
 
     fclose($f);
 
-    chdir($translation_path);
-    $p=popen("git add $translation_path/www/lang/list.php", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+    translation_git_cmd("add $translation_path/www/lang/list.php", $translation_path);
   }
 
   // save
@@ -158,12 +176,9 @@ class translation {
 
     $this->update_language_list();
 
-    chdir($translation_path);
     $author=$current_user->get_author();
     $msg=strtr($param['msg'], array("\""=>"\\\""));
-    $p=popen("git commit --message=\"$msg\" --author=\"$author\"", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+    translation_git_cmd("commit --message=\"$msg\" --author=\"$author\"", $translation_path);
 
     return true;
   }
@@ -249,10 +264,7 @@ class translation {
     }
     fclose($f_t);
 
-    chdir($translation_path);
-    $p=popen("git add $file", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+    translation_git_cmd("add $file", $translation_path);
   }
 
   // write_file_tags
@@ -323,10 +335,7 @@ class translation {
 
     fclose($f_t);
 
-    chdir($translation_path);
-    $p=popen("git add $file", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+    translation_git_cmd("add $file", $translation_path);
   }
 
   // write_file_doc
@@ -338,10 +347,7 @@ class translation {
 
     file_put_contents($file, $data);
 
-    chdir($translation_path);
-    $p=popen("git add $file", "r");
-    while($f=fgets($p)) /* do nothing */ ;
-    pclose($p);
+    translation_git_cmd("add $file", $translation_path);
   }
 
   // read_file_doc
