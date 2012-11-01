@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ ! -d ".git" ] ; then
+  echo "You should call this from the root of your repository"
+  exit
+fi
+
+if [ "$1" != "" ] ; then
+  echo "Adding remote repositories"
+  git remote add translation $1
+  git submodule foreach "echo $1/\$path ; git remote add translation $1/\$path || :"
+fi
+
+echo
+echo "Fetching changes"
+git fetch translation
+git branch translation-update translation/translation
+
+git submodule foreach git fetch translation
+git submodule foreach 'git branch translation-update translation/translation || :'
+
+echo
+echo "* Check for removed/renamed strings in English translation - you may review " > /tmp/import.log
+echo "  changes. Stage all changed files - when continuing, changes will be merged." >> /tmp/import.log
+echo >> /tmp/import.log
+git log -p translation-update..HEAD -- `git ls-files '*[/_]en.php'` `git ls-files *doc`  2>&1 >> /tmp/import.log
+git submodule foreach "git log -p translation-update..HEAD -- \`git ls-files '*[/_]en.php'\` || :" 2>&1 >> /tmp/import.log
+
+echo >> /tmp/import.log
+echo "* List of all updates in translations" >> /tmp/import.log
+git log -p HEAD..translation-update >> /tmp/import.log
+git submodule foreach "git log -p HEAD..translation-update || :" >> /tmp/import.log
+
+less /tmp/import.log
+
+echo "Merging translation updates"
+git merge translation-update
+git submodule foreach "git merge translation-update || :"
+
+echo "Removing translation branches"
+git branch -d translation-update
+git submodule foreach "git branch -d translation-update || :"
