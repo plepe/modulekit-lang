@@ -67,34 +67,42 @@ function translation_print_value($v) {
 
 function translation_files_list() {
   global $translation_path;
+  global $modulekit;
 
   translation_init();
 
   $ret=array();
 
   // $lang_str-Files and doc-Files
-  $ret[]="php:www/lang/";
-  $ret[]="php:www/lang/lang_";
-  $ret[]="tags:www/lang/tags_";
-  $d=opendir("$translation_path/www/plugins");
-  while($f=readdir($d)) {
-    $d1=opendir("$translation_path/www/plugins/$f");
+  // TODO: Define lang_file-template in $modulekit
+  $ret[]="php:./lang/";
+  $ret[]="php:./lang/lang_";
+  $ret[]="tags:./lang/tags_";
+  foreach($modulekit['modules'] as $module_id=>$module_data) {
+    $d1=opendir(modulekit_file($module_id, ""));
     while($f1=readdir($d1)) {
       if(preg_match("/^(.*_)en.doc$/", $f1, $m))
-	$ret[]="doc:www/plugins/$f/$m[1]";
+	$ret[]="doc:".modulekit_file($module_id, $f1);
     }
     closedir($d1);
 
-    if(file_exists("$translation_path/www/plugins/$f/lang_en.php"))
-      $ret[]="php:www/plugins/$f/lang_";
+    if(file_exists($f=modulekit_file($module_id, "lang_en.php")))
+      $ret[]="php:".substr($f, 0, strlen($f)-6);
+    if(file_exists($f=modulekit_file($module_id, "lang/en.php")))
+      $ret[]="php:".substr($f, 0, strlen($f)-6);
   }
   closedir($d);
 
   // Categories
+  // TODO: Include additional language types via hook - move this to own
+  // module in OpenStreetBrowser
   $res=sql_query("select * from category_current", $db_central);
   while($elem=pg_fetch_assoc($res)) {
     $ret[]="category:{$elem['category_id']}:{$elem['version']}";
   }
+
+  // Just to be sure ...
+  $ret=array_unique($ret);
 
   return $ret;
 }
