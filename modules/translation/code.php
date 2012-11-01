@@ -34,7 +34,10 @@ function translation_init() {
       print "Error creating translation path '$translation_path'\n";
     }
 
-    translation_git_cmd("clone $root_path $translation_path", $translation_path);
+    $path=modulekit_file("", "", true);
+    translation_git_cmd("clone $path $translation_path", $translation_path);
+    translation_git_cmd("submodule init", $translation_path);
+    translation_git_cmd("submodule update", $translation_path);
   }
 }
 
@@ -123,11 +126,11 @@ class translation {
   function update_language_list() {
     global $translation_path;
 
-    include "$translation_path/www/lang/list.php";
-    include "$translation_path/www/lang/{$this->lang}.php";
+    include "$translation_path/modulekit.php";
+    include "$translation_path/lang/{$this->lang}.php";
     $language_list[$this->lang]=$lang_str['lang:current'];
 
-    $f=fopen("$translation_path/www/lang/list.php", "w");
+    $f=fopen("$translation_path/lang/list.php", "w");
     fwrite($f, "<?\n");
     fwrite($f, "// The UI has been translated to following languages\n");
     $ui_langs[]=$this->lang;
@@ -144,7 +147,7 @@ class translation {
 
     fclose($f);
 
-    translation_git_cmd("add $translation_path/www/lang/list.php", $translation_path);
+    translation_git_cmd("add list.php", "$translation_path/lang");
   }
 
   // save
@@ -187,6 +190,7 @@ class translation {
     $author=$current_user->get_author();
     $msg=strtr($param['msg'], array("\""=>"\\\""));
     translation_git_cmd("commit --message=\"$msg\" --author=\"$author\"", $translation_path);
+    translation_git_cmd("submodule foreach 'git commit --message=\"$msg\" --author=\"$author\" || :'", $translation_path);
 
     return true;
   }
@@ -272,7 +276,7 @@ class translation {
     }
     fclose($f_t);
 
-    translation_git_cmd("add $file", $translation_path);
+    translation_git_cmd("add $file", dirname($file));
   }
 
   // write_file_tags
@@ -343,7 +347,7 @@ class translation {
 
     fclose($f_t);
 
-    translation_git_cmd("add $file", $translation_path);
+    translation_git_cmd("add $file", dirname($file));
   }
 
   // write_file_doc
@@ -355,7 +359,7 @@ class translation {
 
     file_put_contents($file, $data);
 
-    translation_git_cmd("add $file", $translation_path);
+    translation_git_cmd("add $file", dirname($file));
   }
 
   // read_file_doc
