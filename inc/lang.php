@@ -178,6 +178,8 @@ function lang_init() {
   global $lang_genders;
   global $version_string;
 
+  @include modulekit_file("modulekit-lang", "lang/list.php");
+
   lang_load($ui_lang);
 
   // Define a language string for every language
