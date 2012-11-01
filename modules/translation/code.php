@@ -130,14 +130,8 @@ class translation {
     include "$translation_path/lang/{$this->lang}.php";
     $language_list[$this->lang]=$lang_str['lang:current'];
 
-    $f=fopen("$translation_path/lang/list.php", "w");
+    $f=fopen("$translation_path/".modulekit_file("modulekit-lang", "lang/list.php"), "w");
     fwrite($f, "<?\n");
-    fwrite($f, "// The UI has been translated to following languages\n");
-    $ui_langs[]=$this->lang;
-    $ui_langs=array_unique($ui_langs);
-    
-    fwrite($f, "\$ui_langs=array(\"".implode("\", \"", $ui_langs)."\");\n");
-    fwrite($f, "\n");
     fwrite($f, "// A list of all languages we know about\n");
     fwrite($f, "\$language_list=array(\n");
     foreach($language_list as $li=>$ln) {
