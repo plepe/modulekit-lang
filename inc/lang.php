@@ -145,12 +145,12 @@ function lang_load($lang, $loaded=array()) {
 
   $lang_str=array();
 
-  @include_once(modulekit_file("modulekit-lang", "lang/base_{$lang}.php"));
-  @include_once(modulekit_file("modulekit-lang", "lang/lang_{$lang}.php"));
-  @include_once("lang/tags_{$lang}.php");
+  @include(modulekit_file("modulekit-lang", "lang/base_{$lang}.php"));
+  @include(modulekit_file("modulekit-lang", "lang/lang_{$lang}.php"));
+  @include("lang/tags_{$lang}.php");
   foreach($modulekit['order'] as $module) {
-    @include_once(modulekit_file($module, "lang_{$lang}.php"));
-    @include_once(modulekit_file($module, "lang/{$lang}.php"));
+    @include(modulekit_file($module, "lang_{$lang}.php"));
+    @include(modulekit_file($module, "lang/{$lang}.php"));
   }
   $loaded[]=$lang;
 
@@ -180,11 +180,17 @@ function lang_init() {
 
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
-  lang_load($ui_lang);
+  $cache_file=".modulekit-cache/lang_{$ui_lang}.data";
+  if(file_exists($cache_file)) {
+    $lang_str=unserialize(file_get_contents($cache_file));
+  }
+  else {
+    lang_load($ui_lang);
 
-  // Define a language string for every language
-  foreach($language_list as $abbr=>$lang) {
-    $lang_str["lang_native:".$abbr]=$lang;
+    // Define a language string for every language
+    foreach($language_list as $abbr=>$lang) {
+      $lang_str["lang_native:".$abbr]=$lang;
+    }
   }
 
   html_export_var(array("ui_lang"=>$ui_lang, "data_lang"=>$data_lang, "ui_langs"=>$ui_langs, "lang_str"=>$lang_str, "language_list"=>$language_list, "lang_genders"=>$lang_genders));

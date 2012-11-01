@@ -1,0 +1,22 @@
+#!/usr/bin/php
+<?php include "conf.php"; /* load a local configuration */ ?>
+<?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
+
+<?
+include modulekit_file("modulekit-lang", "lang/list.php");
+@mkdir(".modulekit-cache");
+
+foreach($language_list as $lang=>$name) {
+  $lang_str=array();
+
+  print "* Building language cache for $name ($lang)\n";
+
+  lang_load($lang);
+
+  // Define a language string for every language
+  foreach($language_list as $abbr=>$lang_name) {
+    $lang_str["lang_native:".$abbr]=$lang_name;
+  }
+
+  file_put_contents(".modulekit-cache/lang_{$lang}.data", serialize($lang_str));
+}
