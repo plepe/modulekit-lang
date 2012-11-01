@@ -145,11 +145,12 @@ function lang_load($lang, $loaded=array()) {
 
   $lang_str=array();
 
-  @include_once("lang/{$lang}.php");
-  @include_once("lang/lang_{$lang}.php");
+  @include_once(modulekit_file("modulekit-lang", "lang/base_{$lang}.php"));
+  @include_once(modulekit_file("modulekit-lang", "lang/lang_{$lang}.php"));
   @include_once("lang/tags_{$lang}.php");
   foreach($modulekit['order'] as $module) {
     @include_once(modulekit_file($module, "lang_{$lang}.php"));
+    @include_once(modulekit_file($module, "lang/{$lang}.php"));
   }
   $loaded[]=$lang;
 
