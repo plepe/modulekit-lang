@@ -36,8 +36,10 @@ function translation_init() {
 
     $path=modulekit_file("", "", true);
     translation_git_cmd("clone $path $translation_path", $translation_path);
+    translation_git_cmd("checkout -b translation", $translation_path);
     translation_git_cmd("submodule init", $translation_path);
     translation_git_cmd("submodule update", $translation_path);
+    translation_git_cmd("submodule foreach \"git checkout -b translation\"", $translation_path);
   }
 }
 
