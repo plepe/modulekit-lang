@@ -78,8 +78,8 @@ function translation_files_list() {
 
   // $lang_str-Files and doc-Files
   // TODO: Define lang_file-template in $modulekit
-  $ret[]="php:./lang/";
-  $ret[]="php:./lang/lang_";
+  $ret[]="php:".modulekit_file("modulekit-lang", "lang/base_");
+  $ret[]="php:".modulekit_file("modulekit-lang", "lang/lang_");
   $ret[]="tags:./lang/tags_";
   foreach($modulekit['modules'] as $module_id=>$module_data) {
     $d1=opendir(modulekit_file($module_id, ""));
