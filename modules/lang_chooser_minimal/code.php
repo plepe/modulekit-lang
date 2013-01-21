@@ -8,7 +8,7 @@ function lang_chooser_minimal() {
     $r ="<a href='?ui_lang=$code'";
     if($ui_lang==$code)
       $r.=" class='chosen'";
-    $r.="><img src='images/$code.png' alt='$name' title='$name'/></a>\n";
+    $r.="><img src='".modulekit_file("lang", "img/$code.png")."' alt='$name' title='$name'/></a>\n";
     $ret.=$r;
   }
   $ret.="</div>\n";
