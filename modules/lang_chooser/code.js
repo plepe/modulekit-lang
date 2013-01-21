@@ -1,8 +1,5 @@
 function lang_chooser_save() {
   options_set("ui_lang", options_select_get("ui_lang"));
-  options_set("data_lang", options_select_get("data_lang"));
-  if(data_lang=="auto")
-    data_lang=ui_lang;
 }
 
 function lang_chooser_entry(list) {
@@ -38,22 +35,6 @@ function lang_chooser_entry(list) {
 
   ret1+=options_select("ui_lang", ui_langs_x);
   ret1+="<br/>\n";
-
-  var ui_langs_x={};
-  l=[];
-  l[""]="";
-  l["auto"]=t("lang:auto");
-  for(var i in language_list) {
-    if(!i.match(/-/)) { // hide language variants from data languages
-      l[i]=language_list[i];
-      if(lang("lang:"+i)!=l[i])
-	l[i]+=" ("+lang("lang:"+i)+")";
-    }
-  }
-  l[""]=t("lang:");
-
-  ret1+=options_select("data_lang", l);
-  ret1+="</p>\n";
 
   parts.innerHTML=ret1;
 
