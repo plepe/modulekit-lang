@@ -182,3 +182,5 @@ function lang_init() {
   html_export_var(array("ui_lang"=>$ui_lang, "lang_str"=>$lang_str, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders));
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
 }
+
+register_hook("init", "lang_init");
