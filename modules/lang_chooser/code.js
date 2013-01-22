@@ -12,15 +12,15 @@ function lang_chooser_entry(list) {
   ret1+="<p>\n";
 
   var ui_langs_x={};
-  for(var i=0; i<ui_langs.length; i++) {
-    var str=language_list[ui_langs[i]];
-    if(lang("lang:"+ui_langs[i])!=str)
-      str+=" ("+lang("lang:"+ui_langs[i])+")";
-    ui_langs_x[ui_langs[i]]=str;
+  for(var i=0; i<languages.length; i++) {
+    var str=language_list[languages[i]];
+    if(lang("lang:"+languages[i])!=str)
+      str+=" ("+lang("lang:"+languages[i])+")";
+    ui_langs_x[languages[i]]=str;
   }
 
   // if ui_lang is set to a not defined UI lang add this option
-  if(!in_array(ui_langs, ui_lang)) {
+  if(!in_array(languages, ui_lang)) {
     var str="";
     if(language_list[ui_lang])
       str=language_list[ui_lang];

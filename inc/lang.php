@@ -105,12 +105,12 @@ function lang_from_browser($avail_langs=null) {
   return $chosen_lang;
 }
 
-if(!isset($ui_langs)) {
-  $ui_langs=modulekit_loaded("");
-  if(isset($ui_langs['languages']))
-    $ui_langs=$ui_langs['languages'];
+if((!isset($languages))||(!is_array($languages))) {
+  $main_module=modulekit_loaded("");
+  if(isset($main_module['languages']))
+    $languages=$main_module['languages'];
   else
-    $ui_langs=array();
+    $languages=array("en");
 }
 
 if(isset($_REQUEST['ui_lang']))
@@ -122,9 +122,9 @@ if(!isset($ui_lang)&&
 if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
   $ui_lang=$_COOKIE['ui_lang'];
 if(!isset($ui_lang))
-  $ui_lang=lang_from_browser($ui_langs);
+  $ui_lang=lang_from_browser($languages);
 if(!$ui_lang)
-  $ui_lang="en";
+  $ui_lang=$languages[0];
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
@@ -158,8 +158,8 @@ function lang_code_check($lang) {
 function lang_init() {
   global $lang_str;
   global $ui_lang;
-  global $ui_langs;
   global $language_list;
+  global $languages;
   global $design_hidden;
   global $lang_genders;
   global $version_string;
@@ -179,6 +179,6 @@ function lang_init() {
     }
   }
 
-  html_export_var(array("ui_lang"=>$ui_lang, "ui_langs"=>$ui_langs, "lang_str"=>$lang_str, "language_list"=>$language_list, "lang_genders"=>$lang_genders));
+  html_export_var(array("ui_lang"=>$ui_lang, "lang_str"=>$lang_str, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders));
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
 }
