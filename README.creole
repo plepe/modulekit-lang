@@ -1,2 +1,9 @@
 == MODULEKIT-LANG ==
 A translation library for use with Modulekit.
+
+=== Howto ===
+In your conf.php define an array $languages with a list of supported languages. First entry is the default language. E.g.:
+
+conf.php: {{{
+$languages=array("de", "en");
+}}}
