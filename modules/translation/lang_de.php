@@ -1,6 +1,6 @@
 <?
 $lang_str["translation:name"]="Übersetzung";
-#$lang_str["translation:string_id"]="ID";
+$lang_str["translation:string_id"]="ID";
 $lang_str["translation:translation"]="Übersetzung";
 $lang_str["translation:compare"]="Vergleichen";
 $lang_str["translation:improve"]="Übersetzung verbessern";
