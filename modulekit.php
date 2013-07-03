@@ -3,7 +3,7 @@ $name="Language System";
 
 $id="modulekit-lang";
 
-$depend=array("hooks", "html");
+$depend=array("hooks", "html", "sprintf");
 
 $include=array(
   'php'=>array(
