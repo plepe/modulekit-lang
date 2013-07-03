@@ -52,7 +52,26 @@ function lang_element(str, count) {
 }
 
 function lang(str, count) {
-  var el=lang_element(str, count);
+  var el;
+
+  // if 'key' is an array, translations are passed as array values, like:
+  // array(
+  //   'en'	=>"English text",
+  //   'de'	=>"German text"
+  // )
+  // if current language is not defined in the array the first language
+  // will be used (in that case 'en'.
+  if(typeof str=="object") {
+    if(typeof str[ui_lang]=="undefined")
+      for(var i in str) {
+	el=str[i];
+	break;
+      }
+    else
+      el=str[ui_lang];
+  }
+  else
+    el=lang_element(str, count);
 
   if(arguments.length<=2)
     return el;

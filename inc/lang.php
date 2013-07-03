@@ -17,32 +17,49 @@ function lang() {
     $count=1;
   $params=array_slice(func_get_args(), $offset);
 
-  ereg("^(.*)/(.*)$", $key, $m);
-  $key_exp=explode(";", $m[2]);
-  if(sizeof($key_exp)>1) {
-    foreach($key_exp as $key_index=>$key_value) {
-      $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
-    }
-    $l=implode(", ", $key_exp);
-  }
-  elseif(!isset($lang_str[$key])) {
-    if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
-      // Boolean values, see:
-      // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
-      $key=$k;
-    }
-    else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
-      $key=$m[3];
-    }
-    elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
-      $key=$m[1];
-    }
+  // if 'key' is an array, translations are passed as array values, like:
+  // array(
+  //   'en'	=>"English text",
+  //   'de'	=>"German text"
+  // )
+  // if current language is not defined in the array the first language
+  // will be used (in that case 'en'.
+  if(is_array($key)) {
+    global $ui_lang;
 
-
-    return $key.(sizeof($params)?" ".implode(", ", $params):"");
+    if(isset($key[$ui_lang]))
+      $l=$key[$ui_lang];
+    else
+      $l=$key[array_shift(array_keys($key))];
   }
   else {
-    $l=$lang_str[$key];
+    ereg("^(.*)/(.*)$", $key, $m);
+    $key_exp=explode(";", $m[2]);
+    if(sizeof($key_exp)>1) {
+      foreach($key_exp as $key_index=>$key_value) {
+	$key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+      }
+      $l=implode(", ", $key_exp);
+    }
+    elseif(!isset($lang_str[$key])) {
+      if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
+	// Boolean values, see:
+	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
+	$key=$k;
+      }
+      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
+	$key=$m[3];
+      }
+      elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
+	$key=$m[1];
+      }
+
+
+      return $key.(sizeof($params)?" ".implode(", ", $params):"");
+    }
+    else {
+      $l=$lang_str[$key];
+    }
   }
 
   if(is_array($l)&&(sizeof($l)==1)) {
