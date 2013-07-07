@@ -195,6 +195,10 @@ function lang_init() {
     foreach($language_list as $abbr=>$lang) {
       $lang_str["lang_native:".$abbr]=$lang;
     }
+
+    if(is_writeable($modulekit_cache_dir)) {
+      file_put_contents($cache_file, serialize($lang_str));
+    }
   }
 
   html_export_var(array("ui_lang"=>$ui_lang, "lang_str"=>$lang_str, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders));
