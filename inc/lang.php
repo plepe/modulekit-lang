@@ -180,11 +180,13 @@ function lang_init() {
   global $design_hidden;
   global $lang_genders;
   global $version_string;
+  global $modulekit;
   global $modulekit_cache_dir;
 
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
+  $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
   if(file_exists($cache_file)) {
     $lang_str=unserialize(file_get_contents($cache_file));
   }
@@ -198,10 +200,17 @@ function lang_init() {
 
     if(is_writeable($modulekit_cache_dir)) {
       file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file_js, "var lang_str=".json_encode($lang_str).";\n");
     }
   }
 
-  html_export_var(array("ui_lang"=>$ui_lang, "lang_str"=>$lang_str, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders));
+  $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
+  if(file_exists($cache_file_js))
+    add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
+  else
+    $vars['lang_str']=$lang_str;
+
+  html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
 }
 
