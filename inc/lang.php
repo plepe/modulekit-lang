@@ -180,10 +180,11 @@ function lang_init() {
   global $design_hidden;
   global $lang_genders;
   global $version_string;
+  global $modulekit_cache_dir;
 
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
-  $cache_file=".modulekit-cache/lang_{$ui_lang}.data";
+  $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   if(file_exists($cache_file)) {
     $lang_str=unserialize(file_get_contents($cache_file));
   }

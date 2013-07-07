@@ -4,7 +4,7 @@
 
 <?
 include modulekit_file("modulekit-lang", "lang/list.php");
-@mkdir(".modulekit-cache");
+@mkdir($modulekit_cache_dir);
 
 foreach($language_list as $lang=>$name) {
   $lang_str=array();
@@ -18,5 +18,5 @@ foreach($language_list as $lang=>$name) {
     $lang_str["lang_native:".$abbr]=$lang_name;
   }
 
-  file_put_contents(".modulekit-cache/lang_{$lang}.data", serialize($lang_str));
+  file_put_contents("{$modulekit_cache_dir}lang_{$lang}.data", serialize($lang_str));
 }
