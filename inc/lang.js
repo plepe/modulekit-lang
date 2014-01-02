@@ -55,20 +55,39 @@ function lang(str, count) {
   var el;
 
   // if 'key' is an array, translations are passed as array values, like:
-  // array(
-  //   'en'	=>"English text",
-  //   'de'	=>"German text"
+  // {
+  //   'en':	"English text",
+  //   'de':	"German text"
+  // }
+  // optionally a prefix can be defined as second parameter, e.g.
+  //
+  // x = {
+  //   'en':		"English text",
+  //   'de':		"German text"
+  //   'desc:en':	"English description",
+  //   'desc:de':	"German description"
   // )
+  // lang(x)            -> will return "English text" or "German text"
+  // lang(x, 'desc:')   -> will return "English description" or "German description"
+  //
   // if current language is not defined in the array the first language
-  // will be used (in that case 'en'.
+  // will be used (in that case 'en').
   if(typeof str=="object") {
-    if(typeof str[ui_lang]=="undefined")
+    prefix = ""
+    if((arguments.length>1) && (typeof arguments[1] == "string")) {
+      prefix = arguments[1];
+      count = arguments[2];
+    }
+
+    if(typeof str[prefix + ui_lang]=="undefined")
       for(var i in str) {
-	el=str[i];
-	break;
+	if(i.substr(0, prefix.length) == prefix) {
+	  el=str[i];
+	  break;
+	}
       }
     else
-      el=str[ui_lang];
+      el=str[prefix + ui_lang];
   }
   else
     el=lang_element(str, count);

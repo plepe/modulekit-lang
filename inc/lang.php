@@ -22,15 +22,38 @@ function lang() {
   //   'en'	=>"English text",
   //   'de'	=>"German text"
   // )
+  //
+  // optionally a prefix can be defined as second parameter, e.g.
+  //
+  // $x = array(
+  //   'en'		=>"English text",
+  //   'de'		=>"German text"
+  //   'desc:en'	=>"English description",
+  //   'desc:de'	=>"German description"
+  // )
+  // lang($x)            -> will return "English text" or "German text"
+  // lang($x, 'desc:')   -> will return "English description" or "German description"
+  //
   // if current language is not defined in the array the first language
-  // will be used (in that case 'en'.
+  // will be used (in that case 'en').
   if(is_array($key)) {
     global $ui_lang;
 
-    if(isset($key[$ui_lang]))
-      $l=$key[$ui_lang];
-    else
-      $l=$key[array_shift(array_keys($key))];
+    $prefix = "";
+    if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
+      $prefix = func_get_arg(1);
+      $count = func_get_arg(2);
+    }
+
+    if(isset($key["{$prefix}{$ui_lang}"]))
+      $l=$key["{$prefix}{$ui_lang}"];
+    else {
+      foreach($key as $k=>$v)
+        if(substr($k, 0, strlen($prefix)) == $prefix) {
+	  $l=$v;
+	  break;
+	}
+    }
   }
   else {
     ereg("^(.*)/(.*)$", $key, $m);
