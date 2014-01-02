@@ -42,7 +42,8 @@ function lang() {
     $prefix = "";
     if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
       $prefix = func_get_arg(1);
-      $count = func_get_arg(2);
+      if(sizeof(func_get_args())>2)
+	$count = func_get_arg(2);
     }
 
     if(isset($key["{$prefix}{$ui_lang}"]))
