@@ -9,7 +9,7 @@ function lang() {
   $offset=1;
 
   $key=func_get_arg(0);
-  if((sizeof(func_get_args())>1)&&is_integer(func_get_arg(1))) {
+  if((sizeof(func_get_args())>1)&&is_numeric(func_get_arg(1))) {
     $offset++;
     $count=func_get_arg(1);
   }
@@ -90,7 +90,7 @@ function lang() {
     $l=$l[0];
   }
   elseif(is_array($l)) {
-    if(($count===0)||($count>1))
+    if(($count===0)||($count!=1))
       $i=1;
     else
       $i=0;
