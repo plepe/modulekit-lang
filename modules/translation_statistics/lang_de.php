@@ -1,4 +1,4 @@
-<?
+<?php
 $lang_str["translation_statistics:name"]="Übersetzungsstatistik";
 
 $lang_str["translation_statistics:local"]="Name in eigener Sprache";

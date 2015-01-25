@@ -1,4 +1,4 @@
-<?
+<?php
 global $translation_path;
 
 // call translation_git_cmd without the git command, e.g.

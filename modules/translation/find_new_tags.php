@@ -1,4 +1,4 @@
-<?
+<?php
 include "www/lang/list.php";
 $lang_str=array();
 $f=fopen("www/lang/tags_en.php", "r");

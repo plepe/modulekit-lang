@@ -1,4 +1,4 @@
-<?
+<?php
 define("F", 1);
 define("M", 2);
 define("N", 3);

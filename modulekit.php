@@ -1,4 +1,4 @@
-<?
+<?php
 $name="Language System";
 
 $id="modulekit-lang";

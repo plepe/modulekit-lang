@@ -1,4 +1,4 @@
-<?
+<?php
 function lang_chooser_minimal() {
   global $language_list;
   global $languages;

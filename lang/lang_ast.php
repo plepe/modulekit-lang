@@ -1,4 +1,4 @@
-<?
+<?php
 $lang_str["lang:de"]="Alemán";
 $lang_str["lang:bg"]="Búlgaru";
 $lang_str["lang:cs"]="Checu";

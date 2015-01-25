@@ -1,4 +1,4 @@
-<?
+<?php
 function translation_statistics_load_tags_missing() {
   global $translation_path;
   $list=array();
