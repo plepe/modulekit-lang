@@ -1,4 +1,4 @@
-<?
+<?php
 define("F", 1);
 define("M", 2);
 define("N", 3);
@@ -9,7 +9,7 @@ function lang() {
   $offset=1;
 
   $key=func_get_arg(0);
-  if((sizeof(func_get_args())>1)&&is_integer(func_get_arg(1))) {
+  if((sizeof(func_get_args())>1)&&is_numeric(func_get_arg(1))) {
     $offset++;
     $count=func_get_arg(1);
   }
@@ -17,39 +17,80 @@ function lang() {
     $count=1;
   $params=array_slice(func_get_args(), $offset);
 
-  ereg("^(.*)/(.*)$", $key, $m);
-  $key_exp=explode(";", $m[2]);
-  if(sizeof($key_exp)>1) {
-    foreach($key_exp as $key_index=>$key_value) {
-      $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
-    }
-    $l=implode(", ", $key_exp);
-  }
-  elseif(!isset($lang_str[$key])) {
-    if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
-      // Boolean values, see:
-      // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
-      $key=$k;
-    }
-    else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
-      $key=$m[3];
-    }
-    elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
-      $key=$m[1];
+  // if 'key' is an array, translations are passed as array values, like:
+  // array(
+  //   'en'	=>"English text",
+  //   'de'	=>"German text"
+  // )
+  //
+  // optionally a prefix can be defined as second parameter, e.g.
+  //
+  // $x = array(
+  //   'en'		=>"English text",
+  //   'de'		=>"German text"
+  //   'desc:en'	=>"English description",
+  //   'desc:de'	=>"German description"
+  // )
+  // lang($x)            -> will return "English text" or "German text"
+  // lang($x, 'desc:')   -> will return "English description" or "German description"
+  //
+  // if current language is not defined in the array the first language
+  // will be used (in that case 'en').
+  if(is_array($key)) {
+    global $ui_lang;
+
+    $prefix = "";
+    if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
+      $prefix = func_get_arg(1);
+      if(sizeof(func_get_args())>2)
+	$count = func_get_arg(2);
     }
 
-
-    return $key.(sizeof($params)?" ".implode(", ", $params):"");
+    if(isset($key["{$prefix}{$ui_lang}"]))
+      $l=$key["{$prefix}{$ui_lang}"];
+    else {
+      foreach($key as $k=>$v)
+        if(substr($k, 0, strlen($prefix)) == $prefix) {
+	  $l=$v;
+	  break;
+	}
+    }
   }
   else {
-    $l=$lang_str[$key];
+    ereg("^(.*)/(.*)$", $key, $m);
+    $key_exp=explode(";", $m[2]);
+    if(sizeof($key_exp)>1) {
+      foreach($key_exp as $key_index=>$key_value) {
+	$key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+      }
+      $l=implode(", ", $key_exp);
+    }
+    elseif(!isset($lang_str[$key])) {
+      if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
+	// Boolean values, see:
+	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
+	$key=$k;
+      }
+      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
+	$key=$m[3];
+      }
+      elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
+	$key=$m[1];
+      }
+
+
+      return $key.(sizeof($params)?" ".implode(", ", $params):"");
+    }
+    else {
+      $l=$lang_str[$key];
+    }
   }
 
   if(is_array($l)&&(sizeof($l)==1)) {
     $l=$l[0];
   }
   elseif(is_array($l)) {
-    if(($count===0)||($count>1))
+    if(($count===0)||($count!=1))
       $i=1;
     else
       $i=0;
@@ -105,12 +146,12 @@ function lang_from_browser($avail_langs=null) {
   return $chosen_lang;
 }
 
-if(!isset($ui_langs)) {
-  $ui_langs=modulekit_loaded("");
-  if(isset($ui_langs['languages']))
-    $ui_langs=$ui_langs['languages'];
+if((!isset($languages))||(!is_array($languages))) {
+  $main_module=modulekit_loaded("");
+  if(isset($main_module['languages']))
+    $languages=$main_module['languages'];
   else
-    $ui_langs=array();
+    $languages=array("en");
 }
 
 if(isset($_REQUEST['ui_lang']))
@@ -122,22 +163,9 @@ if(!isset($ui_lang)&&
 if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
   $ui_lang=$_COOKIE['ui_lang'];
 if(!isset($ui_lang))
-  $ui_lang=lang_from_browser($ui_langs);
+  $ui_lang=lang_from_browser($languages);
 if(!$ui_lang)
-  $ui_lang="en";
-
-if(isset($_REQUEST['data_lang']))
-  $data_lang=$_REQUEST['data_lang'];
-if(!isset($data_lang)&&
-   array_key_exists('param', $_REQUEST)&&
-   array_key_exists('data_lang', $_REQUEST['param']))
-  $data_lang=$_REQUEST['param']['data_lang'];
-if(!isset($data_lang)&&array_key_exists('data_lang', $_COOKIE))
-  $data_lang=$_COOKIE['data_lang'];
-if(!isset($data_lang))
-  $data_lang="auto";
-if($data_lang=="auto")
-  $data_lang=$ui_lang;
+  $ui_lang=$languages[0];
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
@@ -171,16 +199,18 @@ function lang_code_check($lang) {
 function lang_init() {
   global $lang_str;
   global $ui_lang;
-  global $ui_langs;
-  global $data_lang;
   global $language_list;
+  global $languages;
   global $design_hidden;
   global $lang_genders;
   global $version_string;
+  global $modulekit;
+  global $modulekit_cache_dir;
 
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
-  $cache_file=".modulekit-cache/lang_{$ui_lang}.data";
+  $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
+  $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
   if(file_exists($cache_file)) {
     $lang_str=unserialize(file_get_contents($cache_file));
   }
@@ -191,8 +221,21 @@ function lang_init() {
     foreach($language_list as $abbr=>$lang) {
       $lang_str["lang_native:".$abbr]=$lang;
     }
+
+    if(is_writeable($modulekit_cache_dir)) {
+      file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file_js, "var lang_str=".json_encode($lang_str).";\n");
+    }
   }
 
-  html_export_var(array("ui_lang"=>$ui_lang, "data_lang"=>$data_lang, "ui_langs"=>$ui_langs, "lang_str"=>$lang_str, "language_list"=>$language_list, "lang_genders"=>$lang_genders));
+  $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
+  if(file_exists($cache_file_js))
+    add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
+  else
+    $vars['lang_str']=$lang_str;
+
+  html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
 }
+
+register_hook("init", "lang_init");

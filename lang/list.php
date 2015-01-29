@@ -1,4 +1,4 @@
-<?
+<?php
 // A list of all languages we know about
 $language_list=array(
   ""=>"Local language",

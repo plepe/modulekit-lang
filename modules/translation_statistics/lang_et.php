@@ -1,4 +1,4 @@
-<?
+<?php
 $lang_str["translation_statistics:name"]="Tõlkimise statistika";
 
 $lang_str["translation_statistics:local"]="Kohalik keele nimi";

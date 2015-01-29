@@ -1,8 +1,5 @@
 function lang_chooser_save() {
   options_set("ui_lang", options_select_get("ui_lang"));
-  options_set("data_lang", options_select_get("data_lang"));
-  if(data_lang=="auto")
-    data_lang=ui_lang;
 }
 
 function lang_chooser_entry(list) {
@@ -15,15 +12,15 @@ function lang_chooser_entry(list) {
   ret1+="<p>\n";
 
   var ui_langs_x={};
-  for(var i=0; i<ui_langs.length; i++) {
-    var str=language_list[ui_langs[i]];
-    if(lang("lang:"+ui_langs[i])!=str)
-      str+=" ("+lang("lang:"+ui_langs[i])+")";
-    ui_langs_x[ui_langs[i]]=str;
+  for(var i=0; i<languages.length; i++) {
+    var str=language_list[languages[i]];
+    if(lang("lang:"+languages[i])!=str)
+      str+=" ("+lang("lang:"+languages[i])+")";
+    ui_langs_x[languages[i]]=str;
   }
 
   // if ui_lang is set to a not defined UI lang add this option
-  if(!in_array(ui_langs, ui_lang)) {
+  if(!in_array(languages, ui_lang)) {
     var str="";
     if(language_list[ui_lang])
       str=language_list[ui_lang];
@@ -38,22 +35,6 @@ function lang_chooser_entry(list) {
 
   ret1+=options_select("ui_lang", ui_langs_x);
   ret1+="<br/>\n";
-
-  var ui_langs_x={};
-  l=[];
-  l[""]="";
-  l["auto"]=t("lang:auto");
-  for(var i in language_list) {
-    if(!i.match(/-/)) { // hide language variants from data languages
-      l[i]=language_list[i];
-      if(lang("lang:"+i)!=l[i])
-	l[i]+=" ("+lang("lang:"+i)+")";
-    }
-  }
-  l[""]=t("lang:");
-
-  ret1+=options_select("data_lang", l);
-  ret1+="</p>\n";
 
   parts.innerHTML=ret1;
 

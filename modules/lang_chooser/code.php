@@ -1,4 +1,4 @@
-<?
+<?php
 function lang_chooser_main_links($list) {
   global $ui_lang;
 

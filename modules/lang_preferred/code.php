@@ -1,4 +1,4 @@
-<?
+<?php
 global $lang_preferred_langs;
 
 function lang_preferred_init() {

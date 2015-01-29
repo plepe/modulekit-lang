@@ -1,0 +1,9 @@
+div#lang_chooser_minimal {
+    float: right;
+}
+div#lang_chooser_minimal img {
+    border: none;
+}
+div#lang_chooser_minimal .chosen img {
+    border: 1px solid black;
+}

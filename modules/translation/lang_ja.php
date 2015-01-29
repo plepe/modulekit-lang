@@ -1,4 +1,4 @@
-<?
+<?php
 $lang_str["translation:name"]="翻訳";
 $lang_str["translation:string_id"]="ID";
 $lang_str["translation:translation"]="訳語";
