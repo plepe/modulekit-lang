@@ -6,54 +6,7 @@ function change_language() {
   ob.submit();
 }
 
-function lang_element(str, count) {
-  var l;
-
-  if(l=lang_str[str]) {
-    if(typeof(l)=="string")
-      return l;
-
-    var i;
-    if(l.length>1) {
-      if((count===0)||(count>1))
-        i=1;
-      else
-        i=0;
-
-      // if a Gender is defined, shift values
-      if(typeof(l[0])=="number")
-        i++;
-
-      return l[i];
-    }
-    else if(l.length==1)
-      return l[0];
-  }
-
-  if(typeof debug=="function")
-    debug(str, "language string missing");
-
-  if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
-    // Boolean values, see:
-    // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
-    return l;
-  }
-  else if(l=str.match(/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/)) {
-    return l[3];
-  }
-  else if(l=str.match(/^tag:([^><=!]*)$/)) {
-    return l[1];
-  }
-
-  if(l=str.match(/^[^:]*:(.*)$/))
-    return l[1];
-
-  return str;
-}
-
-function lang(str, count) {
-  var el;
-
+function lang() {
   // if 'key' is an array, translations are passed as array values, like:
   // {
   //   'en':	"English text",
@@ -61,46 +14,53 @@ function lang(str, count) {
   // }
   // optionally a prefix can be defined as second parameter, e.g.
   //
-  // x = {
-  //   'en':		"English text",
-  //   'de':		"German text"
-  //   'desc:en':	"English description",
-  //   'desc:de':	"German description"
-  // )
-  // lang(x)            -> will return "English text" or "German text"
-  // lang(x, 'desc:')   -> will return "English description" or "German description"
-  //
   // if current language is not defined in the array the first language
   // will be used (in that case 'en').
-  if(typeof str=="object") {
-    prefix = ""
-    if((arguments.length>1) && (typeof arguments[1] == "string")) {
-      prefix = arguments[1];
-      count = arguments[2];
-    }
+  var args = []
+  for(var i=0; i<arguments.length; i++)
+    args[i] = arguments[i];
 
-    if(typeof str[prefix + ui_lang]=="undefined")
-      for(var i in str) {
-	if(i.substr(0, prefix.length) == prefix) {
-	  el=str[i];
-	  break;
-	}
-      }
+  var count = null;
+  if(typeof args[0] == "number") {
+    count = args[0];
+    args = args.slice(1);
+  }
+
+  var key = args[0];
+  args = args.slice(1);
+
+  var def;
+  if(typeof key == "object") {
+    if(ui_lang in key)
+      def = key[ui_lang];
     else
-      el=str[prefix + ui_lang];
+      for(var k in key) {
+        def = key[k];
+        break;
+      }
   }
-  else
-    el=lang_element(str, count);
+  else {
+    if(!key in lang_str)
+      return key;
 
-  if(arguments.length<=2)
-    return el;
-
-  var vars=[];
-  for(var i=2;i<arguments.length;i++) {
-    vars.push(arguments[i]);
+    def = lang_str[key];
   }
 
-  return vsprintf(el, vars);
+  var str;
+  if(typeof def == "string")
+    str = def;
+  else {
+    if(count === null)
+      str = def.message;
+    else if(count in def)
+      str = def[count];
+    else if((count != 1) && ('!=1' in def))
+      str = def['!=1'];
+    else
+      str = def.message;
+  }
+
+  return vsprintf(str, args);
 }
 
 function lang_dom(str, count) {

@@ -6,16 +6,16 @@ $lang_genders=array(1=>"F", 2=>"M", 3=>"N");
 
 function lang() {
   global $lang_str;
-  $offset=1;
+  $params = func_get_args();
 
-  $key=func_get_arg(0);
-  if((sizeof(func_get_args())>1)&&is_numeric(func_get_arg(1))) {
-    $offset++;
-    $count=func_get_arg(1);
+  $count = null;
+  if(is_numeric($params[0])) {
+    $count = $params[0];
+    $params = array_slice($params, 1);
   }
-  else
-    $count=1;
-  $params=array_slice(func_get_args(), $offset);
+
+  $key = $params[0];
+  $params = array_slice($params, 1);
 
   // if 'key' is an array, translations are passed as array values, like:
   // array(
@@ -23,86 +23,44 @@ function lang() {
   //   'de'	=>"German text"
   // )
   //
-  // optionally a prefix can be defined as second parameter, e.g.
-  //
-  // $x = array(
-  //   'en'		=>"English text",
-  //   'de'		=>"German text"
-  //   'desc:en'	=>"English description",
-  //   'desc:de'	=>"German description"
-  // )
   // lang($x)            -> will return "English text" or "German text"
-  // lang($x, 'desc:')   -> will return "English description" or "German description"
   //
   // if current language is not defined in the array the first language
   // will be used (in that case 'en').
   if(is_array($key)) {
     global $ui_lang;
 
-    $prefix = "";
-    if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
-      $prefix = func_get_arg(1);
-      if(sizeof(func_get_args())>2)
-	$count = func_get_arg(2);
-    }
-
-    if(isset($key["{$prefix}{$ui_lang}"]))
-      $l=$key["{$prefix}{$ui_lang}"];
+    if(isset($key[$ui_lang]))
+      $def = $key[$ui_lang];
     else {
-      foreach($key as $k=>$v)
-        if(substr($k, 0, strlen($prefix)) == $prefix) {
-	  $l=$v;
-	  break;
-	}
+      foreach($key as $k=>$v) {
+        $def = $v;
+        break;
+      }
     }
   }
   else {
-    preg_match("/^(.*)\/(.*)$/", $key, $m);
-    $key_exp=explode(";", $m[2]);
-    if(sizeof($key_exp)>1) {
-      foreach($key_exp as $key_index=>$key_value) {
-	$key_exp[$key_index]=lang("$m[1]/$key_value", $count);
-      }
-      $l=implode(", ", $key_exp);
-    }
-    elseif(!isset($lang_str[$key])) {
-      if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
-	// Boolean values, see:
-	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
-	$key=$k;
-      }
-      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
-	$key=$m[3];
-      }
-      elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
-	$key=$m[1];
-      }
+    if(!array_key_exists($key, $lang_str))
+      return $key;
 
-
-      return $key.(sizeof($params)?" ".implode(", ", $params):"");
-    }
-    else {
-      $l=$lang_str[$key];
-    }
+    $def = $lang_str[$key];
   }
 
-  if(is_array($l)&&(sizeof($l)==1)) {
-    $l=$l[0];
+  if(is_string($def)) {
+    $str = $def;
   }
-  elseif(is_array($l)) {
-    if(($count===0)||($count!=1))
-      $i=1;
+  else {
+    if($count === null)
+      $str = $def['message'];
+    elseif(array_key_exists($count, $def))
+      $str = $def[$count];
+    elseif(($count != 1) && (array_key_exists("!=1", $def)))
+      $str = $def['!=1'];
     else
-      $i=0;
-
-    // if a Gender is defined, shift values
-    if(is_integer($l[0]))
-      $i++;
-
-    $l=$l[$i];
+      $str = $def['message'];
   }
 
-  return vsprintf($l, $params);
+  return vsprintf($str, $params);
 }
 
 // replace all {...} by their translations
