@@ -177,7 +177,7 @@ function lang_file_load_json($file) {
 
   foreach($strs as $k=>$v) {
     // if no 'message' => not translated, therefore ignore
-    if(array_key_exists('message', $v)) {
+    if(is_string($v) || (array_key_exists('message', $v))) {
       $lang_str[$k] = $v;
     }
   }
@@ -232,8 +232,12 @@ function lang_load($lang, $loaded=array()) {
   if(in_array($lang_str['base_language'], $loaded))
     return;
 
+  $base = $lang_str['base_language'];
+  if(is_array($base))
+    $base = $base['message'];
+
   $save_lang_str=$lang_str;
-  lang_load($lang_str['base_language'], $loaded);
+  lang_load($base, $loaded);
   $lang_str=array_merge($lang_str, $save_lang_str);
 }
 

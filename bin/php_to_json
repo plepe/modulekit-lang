@@ -19,11 +19,14 @@ while($r=fgets($f)) {
         }
       }
       else
-        $ret[$m[2]]=array('message'=>$lang_str[$m[2]]);
+        $ret[$m[2]]=$lang_str[$m[2]];
     else
       $ret[$m[2]]=array('description'=>"message '{$m[2]}' not translated");
 
     if($m[4]&&(preg_match("/^\s*\/\/\s*(.*)/", $m[4], $m1))) {
+      if(is_string($ret[$m[2]]))
+        $ret[$m[2]] = array("message"=>$ret[$m[2]]);
+
       $ret[$m[2]]['description']=$m1[1];
     }
   }
