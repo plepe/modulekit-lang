@@ -167,18 +167,63 @@ if(!isset($ui_lang))
 if(!$ui_lang)
   $ui_lang=$languages[0];
 
+function lang_file_load_json($file) {
+  global $lang_str;
+
+  if(!file_exists($file))
+    return;
+
+  $strs = json_decode(file_get_contents($file), true);
+
+  foreach($strs as $k=>$v) {
+    // if no 'message' => not translated, therefore ignore
+    if(array_key_exists('message', $v)) {
+      $lang_str[$k] = $v;
+    }
+  }
+}
+
+function lang_file_load_php($file) {
+  @include($file);
+  if(!isset($lang_str))
+    return;
+
+  $strs = $lang_str;
+  global $lang_str;
+
+  foreach($strs as $k=>$v) {
+    if(is_array($v)) {
+      if(in_array($v[0], array(M, F, N))) {
+        $lang_str[$k] = array(
+          'message'     => $v[1],
+          '!=1'         => $v[2],
+          'gender'      => array(M=>'male', F=>'female', N=>'neuter')[$v[0]],
+        );
+      }
+      else {
+        $lang_str[$k] = array(
+          'message'     => $v[0],
+          '!=1'         => $v[1],
+        );
+      }
+    }
+  }
+}
+
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
   global $modulekit;
 
   $lang_str=array();
 
-  @include(modulekit_file("modulekit-lang", "lang/base_{$lang}.php"));
-  @include(modulekit_file("modulekit-lang", "lang/lang_{$lang}.php"));
-  @include("lang/tags_{$lang}.php");
+  lang_file_load_json(modulekit_file("modulekit-lang", "lang/base_{$lang}.json"));
+  lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
+  lang_file_load_php("lang/tags_{$lang}.php");
   foreach($modulekit['order'] as $module) {
-    @include(modulekit_file($module, "lang_{$lang}.php"));
-    @include(modulekit_file($module, "lang/{$lang}.php"));
+    lang_file_load_json(modulekit_file($module, "lang_{$lang}.json"));
+    lang_file_load_php(modulekit_file($module, "lang_{$lang}.php"));
+    lang_file_load_json(modulekit_file($module, "lang/{$lang}.json"));
+    lang_file_load_php(modulekit_file($module, "lang/{$lang}.php"));
   }
   $loaded[]=$lang;
 
