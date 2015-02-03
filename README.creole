@@ -57,3 +57,14 @@ It is possible to have the message for different counts (e.g. "1 cat", "5 cats")
 * if no count matches, the {{{message}}} will be used.
 
 If a string has not been translated (yet), the {{{message}}} value will be missing.
+
+=== lang() function ===
+The lang() function returns a translated string, e.g.:
+{{{
+  lang("hello_world") => "Hello World!"
+}}}
+
+The lang() function has the following parameters:
+* 1st (optional): count of objects (must be numeric value)
+* 2nd (required): either a message key (e.g. "hello_world") or an array of translated strings with the locale id as keys (e.g. { 'en': "English text", 'de': "German text"  })
+* further parameters (optional): replacement values for sprintf-like placeholders (e.g. %s, %i, ...)
