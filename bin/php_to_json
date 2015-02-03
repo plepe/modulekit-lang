@@ -1,0 +1,36 @@
+#!/usr/bin/php
+<?php
+$file = "{$argv[1]}.php";
+
+include "$file";
+
+$f=fopen($file, "r");
+while($r=fgets($f)) {
+  if(preg_match("/^ *(#?)\\\$lang_str\[[\"']([^\"']*)[\"']\]\s*=(.*);(.*)/", $r, $m)) {
+    $found=false;
+    if(isset($lang_str[$m[2]]))
+      if(is_array($lang_str[$m[2]])) {
+        if(in_array($lang_str[$m[2]][0], array('M', 'F', 'N'))) {
+          $ret[$m[2]]=array('message'=>$lang_str[$m[2]][1], "!=1"=>$lang_str[$m[2]][2]);
+          $ret[$m[2]]['gender'] = array('M'=>'male', 'F'=>'female', 'N'=>'neuter')[$lang_str[$m[2]][0]];
+        }
+        else {
+          $ret[$m[2]]=array('message'=>$lang_str[$m[2]][0], "!=1"=>$lang_str[$m[2]][1]);
+        }
+      }
+      else
+        $ret[$m[2]]=array('message'=>$lang_str[$m[2]]);
+    else
+      $ret[$m[2]]=array('description'=>"message '{$m[2]}' not translated");
+
+    if($m[4]&&(preg_match("/^\s*\/\/\s*(.*)/", $m[4], $m1))) {
+      $ret[$m[2]]['description']=$m1[1];
+    }
+  }
+}
+fclose($f);
+
+$text = json_encode($ret, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+file_put_contents("{$argv[1]}.json", $text);
+
+print "created file {$argv[1]}.json\n";
