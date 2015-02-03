@@ -29,3 +29,31 @@ alert(lang("lang:current"));
 </script>
 </body>
 }}}
+
+=== Format description ===
+A translation consists of a file in JSON format. It is based on [[https://developer.chrome.com/extensions/i18n-messages|i18n-messages as used in Chrome]]. Every translatable string is key to the JSON file with the translated string OR an embeded hash with a value "message" and possibly several further values. The most simple examples look like this (both are equal):
+
+{{{
+{
+  "hello_world": "Hello World!"
+}
+
+{
+  "hello_world": {
+    "message": "Hello World!"
+  }
+}
+}}}
+
+The following values for a translatable string are possible:
+* {{{description}}}: some text explaining this message.
+* {{{gender}}}: if supported, the gender of the string (e.g. the german word "Restaurant" is neuter, therefore this value would be "neuter". May have the following values: "male", "female", "neuter".
+
+It is possible to have the message for different counts (e.g. "1 cat", "5 cats"). Therefore the following keys may be supplied:
+* {{{0}}}: special text for zero objects (e.g. "no cats").
+* {{{1}}}: special text for one object.
+* all other distinct counts: special text for any amount of objects.
+* {{{!=1}}}: text for all amounts but 1.
+* if no count matches, the {{{message}}} will be used.
+
+If a string has not been translated (yet), the {{{message}}} value will be missing.
