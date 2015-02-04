@@ -57,7 +57,7 @@ function lang() {
     }
   }
   else {
-    ereg("^(.*)/(.*)$", $key, $m);
+    preg_match("/^(.*)\/(.*)$/", $key, $m);
     $key_exp=explode(";", $m[2]);
     if(sizeof($key_exp)>1) {
       foreach($key_exp as $key_index=>$key_value) {
