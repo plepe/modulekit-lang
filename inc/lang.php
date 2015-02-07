@@ -46,7 +46,9 @@ function lang() {
     $def = $lang_str[$key];
   }
 
-  if(is_string($def)) {
+  if(!$def)
+    return $key;
+  elseif(is_string($def)) {
     $str = $def;
   }
   else {

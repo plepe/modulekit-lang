@@ -47,7 +47,9 @@ function lang() {
   }
 
   var str;
-  if(typeof def == "string")
+  if(!def)
+    return key;
+  else if(typeof def == "string")
     str = def;
   else {
     if(count === null)
