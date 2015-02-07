@@ -8,14 +8,28 @@ function lang() {
   global $lang_str;
   $params = func_get_args();
 
-  $count = null;
-  if(is_numeric($params[0])) {
+  /* compatibility old parameters - uncomment when remove */
+  // $count = null;
+  /* end compatibility */
+  if(is_numeric($params[0]) || ($params[0] === null)) {
     $count = $params[0];
     $params = array_slice($params, 1);
   }
 
   $key = $params[0];
   $params = array_slice($params, 1);
+
+  /* compatibility old parameters */
+  if(!isset($count)) {
+    if(sizeof($params) > 0) {
+      $count = $params[0];
+      $params = array_slice($params, 1);
+      trigger_error("modulekit-lang: deprecated function call to lang() -> pass null as first parameter to force new behaviour");
+    }
+  }
+  else
+    $count = null;
+  /* end compatibility */
 
   // if 'key' is an array, translations are passed as array values, like:
   // array(

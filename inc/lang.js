@@ -20,14 +20,28 @@ function lang() {
   for(var i=0; i<arguments.length; i++)
     args[i] = arguments[i];
 
-  var count = null;
-  if(typeof args[0] == "number") {
+  /* compatibility old parameters - uncomment when remove */
+  // var count = null;
+  /* end compatibility */
+  if((typeof args[0] == "number") || (args[0] === null)) {
     count = args[0];
     args = args.slice(1);
   }
 
   var key = args[0];
   args = args.slice(1);
+
+  /* compatibility old parameters */
+  if(typeof(count) == 'undefined') {
+    if(args.length > 0) {
+      var count = args[0];
+      args = args.slice(1);
+      console.log("modulekit-lang: deprecated function call to lang() -> pass null as first parameter to force new behaviour");
+    }
+  }
+  else
+    var count = null;
+  /* end compatibility */
 
   var def;
   if(typeof key == "object") {
