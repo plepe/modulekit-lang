@@ -207,6 +207,9 @@ function lang_file_load_php($file) {
         );
       }
     }
+    else {
+      $lang_str[$k] = $v;
+    }
   }
 }
 
