@@ -134,6 +134,10 @@ function lang_file_load_json($file) {
     return;
 
   $strs = json_decode(file_get_contents($file), true);
+  if(json_last_error()) {
+    trigger_error("modulekit-lang: JSON error when loading file '$file': " . json_last_error_msg() . "." , E_USER_WARNING);
+    return;
+  }
 
   foreach($strs as $k=>$v) {
     // if no 'message' => not translated, therefore ignore
