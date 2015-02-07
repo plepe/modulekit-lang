@@ -106,7 +106,7 @@ function lang_from_browser($avail_langs=null) {
 	$acc_lang[$m[1]]=$m[2];
       }
     }
-    if(!$acc_lang['q'])
+    if((!array_key_exists('q', $acc_lang)) || (!$acc_lang['q']))
       $acc_lang['q']=1;
 
     if(((!$avail_langs)||(in_array($acc_lang[0], $avail_langs)))
