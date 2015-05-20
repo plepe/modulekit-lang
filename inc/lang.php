@@ -57,13 +57,14 @@ function lang() {
     }
   }
   else {
-    preg_match("/^(.*)\/(.*)$/", $key, $m);
-    $key_exp=explode(";", $m[2]);
-    if(sizeof($key_exp)>1) {
-      foreach($key_exp as $key_index=>$key_value) {
-	$key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+    if(preg_match("/^(.*)\/(.*)$/", $key, $m)) {
+      $key_exp=explode(";", $m[2]);
+      if(sizeof($key_exp)>1) {
+	foreach($key_exp as $key_index=>$key_value) {
+	  $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+	}
+	$l=implode(", ", $key_exp);
       }
-      $l=implode(", ", $key_exp);
     }
     elseif(!isset($lang_str[$key])) {
       if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
@@ -132,7 +133,7 @@ function lang_from_browser($avail_langs=null) {
 	$acc_lang[$m[1]]=$m[2];
       }
     }
-    if(!$acc_lang['q'])
+    if(!array_key_exists('q', $acc_lang))
       $acc_lang['q']=1;
 
     if(((!$avail_langs)||(in_array($acc_lang[0], $avail_langs)))
