@@ -87,7 +87,10 @@ function lang() {
     }
   }
 
-  if(is_array($l)&&(sizeof($l)==1)) {
+  if(!isset($l)) {
+    return null;
+  }
+  elseif(is_array($l)&&(sizeof($l)==1)) {
     $l=$l[0];
   }
   elseif(is_array($l)) {
