@@ -57,13 +57,14 @@ function lang() {
     }
   }
   else {
-    preg_match("/^(.*)\/(.*)$/", $key, $m);
-    $key_exp=explode(";", $m[2]);
-    if(sizeof($key_exp)>1) {
-      foreach($key_exp as $key_index=>$key_value) {
-	$key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+    if(preg_match("/^(.*)\/(.*)$/", $key, $m)) {
+      $key_exp=explode(";", $m[2]);
+      if(sizeof($key_exp)>1) {
+	foreach($key_exp as $key_index=>$key_value) {
+	  $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+	}
+	$l=implode(", ", $key_exp);
       }
-      $l=implode(", ", $key_exp);
     }
     elseif(!isset($lang_str[$key])) {
       if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
@@ -86,7 +87,10 @@ function lang() {
     }
   }
 
-  if(is_array($l)&&(sizeof($l)==1)) {
+  if(!isset($l)) {
+    return null;
+  }
+  elseif(is_array($l)&&(sizeof($l)==1)) {
     $l=$l[0];
   }
   elseif(is_array($l)) {
@@ -132,7 +136,7 @@ function lang_from_browser($avail_langs=null) {
 	$acc_lang[$m[1]]=$m[2];
       }
     }
-    if(!$acc_lang['q'])
+    if(!array_key_exists('q', $acc_lang))
       $acc_lang['q']=1;
 
     if(((!$avail_langs)||(in_array($acc_lang[0], $avail_langs)))
@@ -145,27 +149,6 @@ function lang_from_browser($avail_langs=null) {
 
   return $chosen_lang;
 }
-
-if((!isset($languages))||(!is_array($languages))) {
-  $main_module=modulekit_loaded("");
-  if(isset($main_module['languages']))
-    $languages=$main_module['languages'];
-  else
-    $languages=array("en");
-}
-
-if(isset($_REQUEST['ui_lang']))
-  $ui_lang=$_REQUEST['ui_lang'];
-if(!isset($ui_lang)&&
-   array_key_exists('param', $_REQUEST)&&
-   array_key_exists('ui_lang', $_REQUEST['param']))
-  $ui_lang=$_REQUEST['param']['ui_lang'];
-if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
-  $ui_lang=$_COOKIE['ui_lang'];
-if(!isset($ui_lang))
-  $ui_lang=lang_from_browser($languages);
-if(!$ui_lang)
-  $ui_lang=$languages[0];
 
 function lang_file_load_json($file) {
   global $lang_str;
@@ -259,6 +242,30 @@ function lang_init() {
   global $modulekit;
   global $modulekit_cache_dir;
 
+  // list of available languages
+  if((!isset($languages))||(!is_array($languages))) {
+    $main_module=modulekit_loaded("");
+    if(isset($main_module['languages']))
+      $languages=$main_module['languages'];
+    else
+      $languages=array("en");
+  }
+
+  // Find language to use
+  if(isset($_REQUEST['ui_lang']))
+    $ui_lang=$_REQUEST['ui_lang'];
+  if(!isset($ui_lang)&&
+     array_key_exists('param', $_REQUEST)&&
+     array_key_exists('ui_lang', $_REQUEST['param']))
+    $ui_lang=$_REQUEST['param']['ui_lang'];
+  if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
+    $ui_lang=$_COOKIE['ui_lang'];
+  if(!isset($ui_lang))
+    $ui_lang=lang_from_browser($languages);
+  if(!$ui_lang)
+    $ui_lang=$languages[0];
+
+  // Load language files
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
