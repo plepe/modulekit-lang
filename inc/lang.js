@@ -172,3 +172,10 @@ function lang_code_check(lang) {
 }
 
 register_hook("options_change", lang_change);
+
+// Create twig 'lang' function
+register_hook('twig_init', function() {
+  Twig.extendFunction("lang", function() {
+    return lang.apply(this, arguments);
+  });
+});
