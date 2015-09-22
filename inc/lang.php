@@ -3,6 +3,7 @@ define("F", 1);
 define("M", 2);
 define("N", 3);
 $lang_genders=array(1=>"F", 2=>"M", 3=>"N");
+$lang_gender_names = array(M=>'male', F=>'female', N=>'neuter');
 
 function lang() {
   global $lang_str;
@@ -173,14 +174,15 @@ function lang_file_load_php($file) {
 
   $strs = $lang_str;
   global $lang_str;
+  global $lang_gender_names;
 
   foreach($strs as $k=>$v) {
     if(is_array($v)) {
-      if(in_array($v[0], array(M, F, N))) {
+      if(array_key_exists($v[0], $lang_gender_names)) {
         $lang_str[$k] = array(
           'message'     => $v[1],
           '!=1'         => $v[2],
-          'gender'      => array(M=>'male', F=>'female', N=>'neuter')[$v[0]],
+          'gender'      => $lang_gender_names[$v[0]],
         );
       }
       else {
