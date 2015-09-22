@@ -246,3 +246,12 @@ function lang_init() {
 }
 
 register_hook("init", "lang_init");
+
+// Create twig 'lang' function
+register_hook("twig_init", function() {
+  global $twig;
+
+  $twig->addFunction(new Twig_SimpleFunction('lang', function() {
+    return call_user_func_array("lang", func_get_args());
+  }));
+});
