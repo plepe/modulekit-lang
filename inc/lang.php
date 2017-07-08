@@ -208,10 +208,18 @@ function lang_load($lang, $loaded=array()) {
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
   lang_file_load_php("lang/tags_{$lang}.php");
   foreach($modulekit['order'] as $module) {
+    $lang_dirs = array('lang');
+    if (array_key_exists('lang_dirs', $modulekit['modules'][$module])) {
+      $lang_dirs = $modulekit['modules'][$module]['lang_dirs'];
+    }
+
     lang_file_load_json(modulekit_file($module, "lang_{$lang}.json"));
     lang_file_load_php(modulekit_file($module, "lang_{$lang}.php"));
-    lang_file_load_json(modulekit_file($module, "lang/{$lang}.json"));
-    lang_file_load_php(modulekit_file($module, "lang/{$lang}.php"));
+
+    foreach ($lang_dirs as $lang_dir) {
+      lang_file_load_json(modulekit_file($module, "{$lang_dir}/{$lang}.json"));
+      lang_file_load_php(modulekit_file($module, "{$lang_dir}/{$lang}.php"));
+    }
   }
   $loaded[]=$lang;
 

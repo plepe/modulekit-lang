@@ -30,6 +30,8 @@ alert(lang("lang:current"));
 </body>
 }}}
 
+You may specify alternate language directories for a module, by setting the array $lang_dirs in modulekit.php .
+
 === Format description ===
 A translation consists of a file in JSON format. It is based on [[https://developer.chrome.com/extensions/i18n-messages|i18n-messages as used in Chrome]]. Every translatable string is key to the JSON file with the translated string OR an embeded hash with a value "message" and possibly several further values. The most simple examples look like this (both are equal):
 
