@@ -268,7 +268,7 @@ function lang_init() {
      array_key_exists('param', $_REQUEST)&&
      array_key_exists('ui_lang', $_REQUEST['param']))
     $ui_lang=$_REQUEST['param']['ui_lang'];
-  if (!isset($ui_lang) && array_key_exists('ui_lang', $_SESSION)) {
+  if (!isset($ui_lang) && isset($_SESSION) && array_key_exists('ui_lang', $_SESSION)) {
     $ui_lang = $_SESSION['ui_lang'];
   }
   if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
