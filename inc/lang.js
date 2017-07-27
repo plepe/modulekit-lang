@@ -14,20 +14,16 @@ function lang_element(str, count) {
       return l;
 
     var i;
-    if(l.length>1) {
-      if((count===0)||(count>1))
-        i=1;
-      else
-        i=0;
+    if (typeof l === 'object') {
+      if ('!=1' in l && (count == 0 || count > 1)) {
+        i = '!=1'
+      }
+      else {
+        i = 'message'
+      }
 
-      // if a Gender is defined, shift values
-      if(typeof(l[0])=="number")
-        i++;
-
-      return l[i];
+      return l[i]
     }
-    else if(l.length==1)
-      return l[0];
   }
 
   if(typeof debug=="function")

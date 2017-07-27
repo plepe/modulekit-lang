@@ -95,16 +95,12 @@ function lang() {
     $l=$l[0];
   }
   elseif(is_array($l)) {
-    if(($count===0)||($count!=1))
-      $i=1;
+    if(array_key_exists('!=1', $l) && ($count===0)||($count!=1))
+      $i = '!=1';
     else
-      $i=0;
+      $i = 'message';
 
-    // if a Gender is defined, shift values
-    if(is_integer($l[0]))
-      $i++;
-
-    $l=$l[$i];
+    $l = $l[$i];
   }
 
   return vsprintf($l, $params);
