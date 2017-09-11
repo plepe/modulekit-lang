@@ -91,16 +91,32 @@ function lang() {
   if(!isset($l)) {
     return null;
   }
-  elseif(is_array($l)&&(sizeof($l)==1)) {
-    $l=$l[0];
-  }
   elseif(is_array($l)) {
-    if(array_key_exists('!=1', $l) && ($count===0)||($count!=1))
-      $i = '!=1';
-    else
-      $i = 'message';
+    if (array_key_exists('0', $l)) {
+      if (sizeof($l) === 1) {
+        $l=$l[0];
+      }
+      else {
+        if ($count===0 || $count!=1)
+          $i=1;
+        else
+          $i=0;
 
-    $l = $l[$i];
+        // if a Gender is defined, shift values
+        if(is_integer($l[0]))
+          $i++;
+
+        $l=$l[$i];
+      }
+    }
+    else {
+      if (array_key_exists('!=1', $l) && ($count === 0 || $count > 1)) {
+        $l = $l['!=1'];
+      }
+      elseif (array_key_exists('message', $l)) {
+        $l = $l['message'];
+      }
+    }
   }
 
   return vsprintf($l, $params);

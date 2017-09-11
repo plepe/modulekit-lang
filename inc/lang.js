@@ -14,15 +14,29 @@ function lang_element(str, count) {
       return l;
 
     var i;
-    if (typeof l === 'object') {
-      if ('!=1' in l && (count == 0 || count > 1)) {
-        i = '!=1'
-      }
-      else {
-        i = 'message'
+    if(l.length && l.length>1) {
+      if((count===0)||(count>1))
+        i=1;
+      else
+        i=0;
+
+      // if a Gender is defined, shift values
+      if(typeof(l[0])=="number")
+        i++;
+
+      return l[i];
+    }
+    else if(l.length && l.length==1) {
+      return l[0];
+    }
+    else if (typeof l === 'object') {
+      if ('!=1' in l && (count === 0 || count > 1)) {
+        return l['!=1']
       }
 
-      return l[i]
+      if ('message' in l) {
+        return l['message']
+      }
     }
   }
 
