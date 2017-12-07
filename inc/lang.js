@@ -89,15 +89,20 @@ function lang(str, count) {
       count = arguments[2];
     }
 
-    if(typeof str[prefix + ui_lang]=="undefined")
+    if(typeof str[prefix + ui_lang] !== "undefined") {
+      el=str[prefix + ui_lang];
+    }
+    else if(typeof str[prefix + 'en'] !== "undefined") {
+      el=str[prefix + 'en'];
+    }
+    else {
       for(var i in str) {
 	if(i.substr(0, prefix.length) == prefix) {
 	  el=str[i];
 	  break;
 	}
       }
-    else
-      el=str[prefix + ui_lang];
+    }
   }
   else
     el=lang_element(str, count);

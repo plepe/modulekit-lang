@@ -49,6 +49,8 @@ function lang() {
 
     if(isset($key["{$prefix}{$ui_lang}"]))
       $l=$key["{$prefix}{$ui_lang}"];
+    elseif(isset($key["{$prefix}en"]))
+      $l=$key["{$prefix}en"];
     else {
       foreach($key as $k=>$v)
         if(substr($k, 0, strlen($prefix)) == $prefix) {
