@@ -1,0 +1,22 @@
+#!/usr/bin/php
+<?php @include "conf.php"; /* load a local configuration */ ?>
+<?php include "modulekit/loader.php"; /* loads all php-includes */ ?>
+<?php
+global $language_list;
+include modulekit_file("modulekit-lang", "lang/list.php");
+@mkdir('dist');
+
+if (!isset($languages)) {
+  $tmp = $language_list;
+  unset($tmp['']);
+
+  $languages = array_keys($tmp);
+}
+
+foreach($languages as $lang) {
+  $lang_str=array();
+
+  print "* Building dist file for language '$lang'\n";
+
+  lang_update_cache('dist/', $lang);
+}
