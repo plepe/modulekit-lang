@@ -33,7 +33,7 @@ while($r=fgets($f)) {
 }
 fclose($f);
 
-$text = json_encode($ret, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+$text = json_encode($ret, JSON_PRETTY_PRINT|JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 file_put_contents("{$argv[1]}.json", $text);
 
 print "created file {$argv[1]}.json\n";
