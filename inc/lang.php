@@ -141,7 +141,9 @@ function lang_parse($str, $count=0) {
 function lang_from_browser($avail_langs=null) {
   $max_q=-1;
   $chosen_lang="";
-  $acc_langs=explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+  $acc_langs = array();
+  if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+    $acc_langs=explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
   foreach($acc_langs as $acc_lang) {
     $acc_lang=explode(";", $acc_lang);
