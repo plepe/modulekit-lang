@@ -297,27 +297,9 @@ function lang_init() {
   // Load language files
   @include modulekit_file("modulekit-lang", "lang/list.php");
 
-  $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
+  $lang_str = lang_update_cache($modulekit_cache_dir, $ui_lang);
+
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
-  $cache_file_json="{$modulekit_cache_dir}lang_{$ui_lang}.json";
-  if(file_exists($cache_file)) {
-    $lang_str=unserialize(file_get_contents($cache_file));
-  }
-  else {
-    lang_load($ui_lang);
-
-    // Define a language string for every language
-    foreach($language_list as $abbr=>$lang) {
-      $lang_str["lang_native:".$abbr]=$lang;
-    }
-
-    if(is_writeable($modulekit_cache_dir)) {
-      file_put_contents($cache_file, serialize($lang_str));
-      file_put_contents($cache_file_js, "var lang_str=" . json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES) . ";");
-      file_put_contents($cache_file_json, json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
-    }
-  }
-
   $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
   if(file_exists($cache_file_js))
     add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
@@ -326,6 +308,34 @@ function lang_init() {
 
   html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
+}
+
+function lang_update_cache ($dir, $lang) {
+  global $lang_str;
+
+  $cache_file = "{$dir}lang_{$lang}.data";
+  $cache_file_js = "{$dir}lang_{$lang}.js";
+  $cache_file_json = "{$dir}lang_{$lang}.json";
+
+  if (file_exists($cache_file)) {
+    $lang_str = unserialize(file_get_contents($cache_file));
+  }
+  else {
+    lang_load($lang);
+
+    // Define a language string for every language
+    foreach($language_list as $abbr => $lang_id) {
+      $lang_str["lang_native:{$abbr}"] = $lang_id;
+    }
+
+    if(is_writeable($dir)) {
+      file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file_js, "var lang_str=" . json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES) . ";");
+      file_put_contents($cache_file_json, json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+    }
+  }
+
+  return $lang_str;
 }
 
 register_hook("init", "lang_init");
