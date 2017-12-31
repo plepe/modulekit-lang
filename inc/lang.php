@@ -299,6 +299,7 @@ function lang_init() {
 
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
+  $cache_file_json="{$modulekit_cache_dir}lang_{$ui_lang}.json";
   if(file_exists($cache_file)) {
     $lang_str=unserialize(file_get_contents($cache_file));
   }
@@ -312,7 +313,8 @@ function lang_init() {
 
     if(is_writeable($modulekit_cache_dir)) {
       file_put_contents($cache_file, serialize($lang_str));
-      file_put_contents($cache_file_js, "var lang_str=".json_encode($lang_str).";\n");
+      file_put_contents($cache_file_js, "var lang_str=" . json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES) . ";");
+      file_put_contents($cache_file_json, json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
     }
   }
 
