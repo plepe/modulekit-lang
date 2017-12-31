@@ -203,9 +203,14 @@ function lang_init () {
     ui_lang = languages[0]
   }
 
+  var path = 'dist/'
+  if (typeof dist_path !== 'undefined') {
+    path = dist_path
+  }
+
   if (typeof lang_str === 'undefined') {
     var lang_script = document.createElement('script')
-    lang_script.src = 'dist/lang_' + ui_lang + '.js'
+    lang_script.src = dist_path + '/lang_' + ui_lang + '.js'
     document.head.appendChild(lang_script)
   }
 }
