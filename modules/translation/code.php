@@ -132,18 +132,9 @@ class translation {
     include "$translation_path/lang/{$this->lang}.php";
     $language_list[$this->lang]=$lang_str['lang:current'];
 
-    $f=fopen("$translation_path/".modulekit_file("modulekit-lang", "lang/list.php"), "w");
-    fwrite($f, "<?\n");
-    fwrite($f, "// A list of all languages we know about\n");
-    fwrite($f, "\$language_list=array(\n");
-    foreach($language_list as $li=>$ln) {
-      fwrite($f, "  \"$li\"=>\"$ln\",\n");
-    }
-    fwrite($f, ");\n");
+    file_put_contents("{$translation_path}/lang/list.json", json_encode($language_list, JSON_PRETTY_PRINT|JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 
-    fclose($f);
-
-    translation_git_cmd("add list.php", "$translation_path/lang");
+    translation_git_cmd("add list.json", "{$translation_path}/lang");
   }
 
   // save
