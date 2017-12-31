@@ -1,5 +1,3 @@
-var lang_str={};
-
 function change_language() {
   var ob=document.getElementById("lang_select_form");
 //  ob.action=get_permalink();
@@ -194,3 +192,18 @@ register_hook('twig_init', function() {
     return lang.apply(this, arguments);
   });
 });
+
+if (typeof languages === 'undefined') {
+  var languages = [ 'en' ]
+}
+
+if (typeof ui_lang === 'undefined') {
+  // TODO: detect browser language
+  var ui_lang = languages[0]
+}
+
+if (typeof lang_str === 'undefined') {
+  var lang_script = document.createElement('script')
+  lang_script.src = 'dist/lang_' + ui_lang + '.js'
+  document.head.appendChild(lang_script)
+}
