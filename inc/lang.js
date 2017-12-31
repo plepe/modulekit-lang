@@ -193,17 +193,19 @@ register_hook('twig_init', function() {
   });
 });
 
-if (typeof languages === 'undefined') {
-  var languages = [ 'en' ]
-}
+function lang_init () {
+  if (typeof languages === 'undefined') {
+    languages = [ 'en' ]
+  }
 
-if (typeof ui_lang === 'undefined') {
-  // TODO: detect browser language
-  var ui_lang = languages[0]
-}
+  if (typeof ui_lang === 'undefined') {
+    // TODO: detect browser language
+    ui_lang = languages[0]
+  }
 
-if (typeof lang_str === 'undefined') {
-  var lang_script = document.createElement('script')
-  lang_script.src = 'dist/lang_' + ui_lang + '.js'
-  document.head.appendChild(lang_script)
+  if (typeof lang_str === 'undefined') {
+    var lang_script = document.createElement('script')
+    lang_script.src = 'dist/lang_' + ui_lang + '.js'
+    document.head.appendChild(lang_script)
+  }
 }
