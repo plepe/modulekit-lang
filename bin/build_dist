@@ -5,6 +5,14 @@
 call_hooks('init');
 @mkdir('dist');
 
+$d = opendir('dist');
+while ($f = readdir($d)) {
+  if (preg_match("/^lang_(.*)\.(data|js|json)$/", $f)) {
+    unlink("dist/{$f}");
+  }
+}
+closedir($d);
+
 if (!isset($languages)) {
   $tmp = $language_list;
   unset($tmp['']);
