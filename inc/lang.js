@@ -193,7 +193,11 @@ register_hook('twig_init', function() {
   });
 });
 
-function lang_init () {
+register_hook('init_callback', function (initState, callback) {
+  lang_init(callback)
+})
+
+function lang_init (callback) {
   if (typeof languages === 'undefined') {
     languages = [ 'en' ]
   }
@@ -204,8 +208,20 @@ function lang_init () {
   }
 
   if (typeof lang_str === 'undefined') {
-    var lang_script = document.createElement('script')
-    lang_script.src = 'dist/lang_' + ui_lang + '.js'
-    document.head.appendChild(lang_script)
+    var req = new XMLHttpRequest()
+    req.addEventListener('load', function () {
+      if (this.status === 200) {
+	lang_str = JSON.parse(this.responseText)
+      } else {
+	lang_str = {}
+	console.log('error occured when download translation', this)
+      }
+
+      callback()
+    })
+    req.open('GET', 'dist/lang_' + ui_lang + '.json')
+    req.send()
+  } else {
+    callback()
   }
 }

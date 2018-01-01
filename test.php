@@ -15,7 +15,12 @@ Header("Content-Type: text/html; charset=UTF-8");
 <?php print lang("lang:current"); ?>
 <script type='text/javascript'>
 window.onload = function () {
-  alert(lang("lang:current"));
+  var initState = {}
+  call_hooks_callback('init_callback', initState, load2)
+}
+
+function load2 (initState) {
+  console.log(lang("lang:current"));
 }
 </script>
 </body>

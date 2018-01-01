@@ -307,7 +307,6 @@ function lang_init() {
     $vars['lang_str']=$lang_str;
 
   html_export_var($vars);
-  add_html_header("<script>lang_init()</script>");
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
 }
 
