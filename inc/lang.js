@@ -219,7 +219,13 @@ function lang_init (callback) {
 
       callback()
     })
-    req.open('GET', 'dist/lang_' + ui_lang + '.json')
+
+    var path = 'dist/'
+    if (typeof modulekit_dist_path !== 'undefined') {
+      path = modulekit_dist_path
+    }
+
+    req.open('GET', path + '/lang_' + ui_lang + '.json')
     req.send()
   } else {
     callback()
