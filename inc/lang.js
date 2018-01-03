@@ -198,10 +198,39 @@ register_hook('init_callback', function (initState, callback) {
 })
 
 function lang_init (callback) {
-  if (typeof languages === 'undefined') {
-    languages = [ 'en' ]
+  if (typeof languages === 'undefined' || typeof language_list === 'undefined') {
+    var req = new XMLHttpRequest()
+    req.addEventListener('load', function () {
+      if (this.status === 200) {
+	var d = JSON.parse(this.responseText)
+	if (typeof languages === 'undefined') {
+	  languages = d.languages
+	}
+	if (typeof language_list === 'undefined') {
+	  language_list = d.language_list
+	}
+      } else {
+	languages = [ 'en' ]
+	language_list = {"en":"English"}
+	console.log('error occured when download translation', this)
+      }
+
+      lang_init2(callback)
+    })
+
+    var path = 'dist/'
+    if (typeof modulekit_dist_path !== 'undefined') {
+      path = modulekit_dist_path
+    }
+    req.open('GET', path + '/lang_list.json')
+    req.send()
+    return
   }
 
+  lang_init2(callback)
+}
+
+function lang_init2 (callback) {
   if (typeof ui_lang === 'undefined') {
     // TODO: detect browser language
     ui_lang = languages[0]
