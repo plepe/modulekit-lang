@@ -27,3 +27,17 @@ foreach($languages as $lang) {
 
   lang_update_cache('dist/', $lang);
 }
+
+print "* Writing lang_list file\n";
+
+$file = "dist/lang_list";
+$data = array(
+  "languages" => $languages,
+  "language_list" => $language_list,
+);
+file_put_contents("{$file}.data", serialize($data));
+file_put_contents("{$file}.js",
+  "var languages=" . json_encode($languages, JSON_UNESCAPED_SLASHES) . ";" .
+  "var language_list=" . json_encode($language_list, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES) . ";"
+);
+file_put_contents("{$file}.json", json_encode($data, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
