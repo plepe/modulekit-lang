@@ -230,10 +230,20 @@ function lang_init (callback) {
   lang_init2(callback)
 }
 
+function lang_detect_ui_lang () {
+  for (var i in navigator.languages) {
+    if (languages.indexOf(navigator.languages[i]) !== -1) {
+      ui_lang = navigator.languages[i]
+      return
+    }
+  }
+
+  ui_lang = languages[0]
+}
+
 function lang_init2 (callback) {
   if (typeof ui_lang === 'undefined') {
-    // TODO: detect browser language
-    ui_lang = languages[0]
+    lang_detect_ui_lang()
   }
 
   if (typeof lang_str === 'undefined') {
