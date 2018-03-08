@@ -19,6 +19,10 @@ function lang_shall_count_translations() {
     return false
   }
 
+  if (Array.isArray(lang_non_translated)) {
+    lang_non_translated = {}
+  }
+
   return true
 }
 
