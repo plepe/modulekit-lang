@@ -214,6 +214,7 @@ function lang_file_load_php($file) {
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
+  global $lang_non_translated;
   global $modulekit;
 
   $lang_str=array();
@@ -248,6 +249,14 @@ function lang_load($lang, $loaded=array()) {
 
   $save_lang_str=$lang_str;
   lang_load($base, $loaded);
+
+  // check which lang strings from base language are missing in the main language
+  foreach ($lang_str as $k => $v) {
+    if (!array_key_exists($k, $save_lang_str)) {
+      $lang_non_translated[$k] = 1;
+    }
+  }
+
   $lang_str=array_merge($lang_str, $save_lang_str);
 }
 
@@ -257,6 +266,7 @@ function lang_code_check($lang) {
 
 function lang_init() {
   global $lang_str;
+  global $lang_non_translated;
   global $ui_lang;
   global $language_list;
   global $languages;
@@ -314,7 +324,13 @@ function lang_init() {
     }
   }
 
-  $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
+  $vars=array(
+    "ui_lang"                   => $ui_lang,
+    "language_list"             => $language_list,
+    "languages"                 => $languages,
+    "lang_genders"              => $lang_genders,
+    "lang_non_translated"       => $lang_non_translated,
+  );
   if(file_exists($cache_file_js))
     add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
   else
@@ -322,6 +338,10 @@ function lang_init() {
 
   html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
+}
+
+function ajax_lang_report_non_translated ($param, $post) {
+  call_hooks('lang_report_non_translated', $post, $param['ui_lang']);
 }
 
 register_hook("init", "lang_init");

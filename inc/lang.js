@@ -8,6 +8,13 @@ function change_language() {
 
 function lang_element(str, count) {
   var l;
+  var non_translated_counted = false
+
+  if (str in lang_non_translated) {
+    lang_non_translated[str]++
+    non_translated_counted = true
+  }
+
 
   if(l=lang_str[str]) {
     if(typeof(l)=="string")
@@ -42,6 +49,14 @@ function lang_element(str, count) {
 
   if(typeof debug=="function")
     debug(str, "language string missing");
+
+  if (!non_translated_counted) {
+    if (str in lang_non_translated) {
+      lang_non_translated[str]++
+    } else {
+      lang_non_translated[str] = 1
+    }
+  }
 
   if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
     // Boolean values, see:
@@ -186,7 +201,25 @@ function lang_code_check(lang) {
   return lang.match(/^[a-z\-]+$/);
 }
 
+function lang_report_non_translated () {
+  if (Object.keys(lang_non_translated).length === 0) {
+    return
+  }
+
+  ajax('lang_report_non_translated', { ui_lang: ui_lang }, lang_non_translated, function () {})
+
+  for (var k in lang_non_translated) {
+    lang_non_translated[k] = 0
+  }
+}
+
 register_hook("options_change", lang_change);
+
+register_hook('init', function () {
+  if (modulekit_loaded('modulekit-ajax')) {
+    window.setInterval(lang_report_non_translated, 300000)
+  }
+})
 
 // Create twig 'lang' function
 register_hook('twig_init', function() {
