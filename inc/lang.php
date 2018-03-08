@@ -218,6 +218,7 @@ function lang_load($lang, $loaded=array()) {
   global $modulekit;
 
   $lang_str=array();
+  $lang_non_translated = array();
 
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/base_{$lang}.json"));
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
