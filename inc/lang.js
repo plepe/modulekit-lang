@@ -6,11 +6,27 @@ function change_language() {
   ob.submit();
 }
 
+function lang_shall_count_translations() {
+  if (typeof lang_non_translated === 'undefined') {
+    return false
+  }
+
+  if (lang_non_translated === null) {
+    return false
+  }
+
+  if (typeof lang_non_translated !== 'object') {
+    return false
+  }
+
+  return true
+}
+
 function lang_element(str, count) {
   var l;
   var non_translated_counted = false
 
-  if (str in lang_non_translated) {
+  if (lang_shall_count_translations() && str in lang_non_translated) {
     lang_non_translated[str]++
     non_translated_counted = true
   }
@@ -50,7 +66,7 @@ function lang_element(str, count) {
   if(typeof debug=="function")
     debug(str, "language string missing");
 
-  if (!non_translated_counted) {
+  if (lang_shall_count_translations() && !non_translated_counted) {
     if (str in lang_non_translated) {
       lang_non_translated[str]++
     } else {
