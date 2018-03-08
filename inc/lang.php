@@ -308,7 +308,8 @@ function lang_init() {
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
   if(file_exists($cache_file)) {
-    $lang_str=unserialize(file_get_contents($cache_file));
+    $vars = unserialize(file_get_contents($cache_file));
+    $lang_str = $vars['lang_str'];
   }
   else {
     lang_load($ui_lang);
@@ -318,23 +319,25 @@ function lang_init() {
       $lang_str["lang_native:".$abbr]=$lang;
     }
 
+    $vars=array(
+      "ui_lang"                   => $ui_lang,
+      "lang_str"                  => $lang_str,
+      "language_list"             => $language_list,
+      "languages"                 => $languages,
+      "lang_genders"              => $lang_genders,
+      "lang_non_translated"       => $lang_non_translated,
+    );
+
     if(is_writeable($modulekit_cache_dir)) {
-      file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file, serialize($vars));
       file_put_contents($cache_file_js, "var lang_str=".json_encode($lang_str).";\n");
     }
   }
 
-  $vars=array(
-    "ui_lang"                   => $ui_lang,
-    "language_list"             => $language_list,
-    "languages"                 => $languages,
-    "lang_genders"              => $lang_genders,
-    "lang_non_translated"       => $lang_non_translated,
-  );
-  if(file_exists($cache_file_js))
+  if(file_exists($cache_file_js)) {
+    unset($vars['lang_str']);
     add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
-  else
-    $vars['lang_str']=$lang_str;
+  }
 
   html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
