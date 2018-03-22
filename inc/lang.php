@@ -237,12 +237,12 @@ function lang_load($lang, $loaded=array()) {
   }
   $loaded[]=$lang;
 
-  if(!isset($lang_str['base_language']))
-    $lang_str['base_language']="en";
-  if(in_array($lang_str['base_language'], $loaded))
+  if(!isset($lang_str['lang:base']))
+    $lang_str['lang:base'] = "en";
+  if(in_array($lang_str['lang:base'], $loaded))
     return;
 
-  $base = $lang_str['base_language'];
+  $base = $lang_str['lang:base'];
   if(is_array($base))
     $base = $base['message'];
 
