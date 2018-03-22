@@ -14,7 +14,7 @@ function lang_element(str, count) {
       return l;
 
     var i;
-    if(l.length>1) {
+    if(l.length && l.length>1) {
       if((count===0)||(count>1))
         i=1;
       else
@@ -26,8 +26,18 @@ function lang_element(str, count) {
 
       return l[i];
     }
-    else if(l.length==1)
+    else if(l.length && l.length==1) {
       return l[0];
+    }
+    else if (typeof l === 'object') {
+      if ('!=1' in l && (count === 0 || count > 1)) {
+        return l['!=1']
+      }
+
+      if ('message' in l) {
+        return l['message']
+      }
+    }
   }
 
   if(typeof debug=="function")
@@ -79,15 +89,20 @@ function lang(str, count) {
       count = arguments[2];
     }
 
-    if(typeof str[prefix + ui_lang]=="undefined")
+    if(typeof str[prefix + ui_lang] !== "undefined") {
+      el=str[prefix + ui_lang];
+    }
+    else if(typeof str[prefix + 'en'] !== "undefined") {
+      el=str[prefix + 'en'];
+    }
+    else {
       for(var i in str) {
 	if(i.substr(0, prefix.length) == prefix) {
 	  el=str[i];
 	  break;
 	}
       }
-    else
-      el=str[prefix + ui_lang];
+    }
   }
   else
     el=lang_element(str, count);

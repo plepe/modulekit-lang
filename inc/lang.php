@@ -3,6 +3,7 @@ define("F", 1);
 define("M", 2);
 define("N", 3);
 $lang_genders=array(1=>"F", 2=>"M", 3=>"N");
+$lang_gender_names = array(M=>'male', F=>'female', N=>'neuter');
 
 function lang() {
   global $lang_str;
@@ -48,6 +49,8 @@ function lang() {
 
     if(isset($key["{$prefix}{$ui_lang}"]))
       $l=$key["{$prefix}{$ui_lang}"];
+    elseif(isset($key["{$prefix}en"]))
+      $l=$key["{$prefix}en"];
     else {
       foreach($key as $k=>$v)
         if(substr($k, 0, strlen($prefix)) == $prefix) {
@@ -90,20 +93,32 @@ function lang() {
   if(!isset($l)) {
     return null;
   }
-  elseif(is_array($l)&&(sizeof($l)==1)) {
-    $l=$l[0];
-  }
   elseif(is_array($l)) {
-    if(($count===0)||($count!=1))
-      $i=1;
-    else
-      $i=0;
+    if (array_key_exists('0', $l)) {
+      if (sizeof($l) === 1) {
+        $l=$l[0];
+      }
+      else {
+        if ($count===0 || $count!=1)
+          $i=1;
+        else
+          $i=0;
 
-    // if a Gender is defined, shift values
-    if(is_integer($l[0]))
-      $i++;
+        // if a Gender is defined, shift values
+        if(is_integer($l[0]))
+          $i++;
 
-    $l=$l[$i];
+        $l=$l[$i];
+      }
+    }
+    else {
+      if (array_key_exists('!=1', $l) && ($count === 0 || $count > 1)) {
+        $l = $l['!=1'];
+      }
+      elseif (array_key_exists('message', $l)) {
+        $l = $l['message'];
+      }
+    }
   }
 
   return vsprintf($l, $params);
@@ -152,28 +167,89 @@ function lang_from_browser($avail_langs=null) {
   return $chosen_lang;
 }
 
+function lang_file_load_json($file) {
+  global $lang_str;
+
+  if(!file_exists($file))
+    return;
+
+  $strs = json_decode(file_get_contents($file), true);
+
+  foreach($strs as $k=>$v) {
+    // if no 'message' => not translated, therefore ignore
+    if((is_string($v) && $v !== "") || (array_key_exists('message', $v))) {
+      $lang_str[$k] = $v;
+    }
+  }
+}
+
+function lang_file_load_php($file) {
+  @include($file);
+  if(!isset($lang_str))
+    return;
+
+  $strs = $lang_str;
+  global $lang_str;
+  global $lang_gender_names;
+
+  foreach($strs as $k=>$v) {
+    if(is_array($v)) {
+      if(array_key_exists($v[0], $lang_gender_names)) {
+        $lang_str[$k] = array(
+          'message'     => $v[1],
+          '!=1'         => $v[2],
+          'gender'      => $lang_gender_names[$v[0]],
+        );
+      }
+      else {
+        $lang_str[$k] = array(
+          'message'     => $v[0],
+          '!=1'         => $v[1],
+        );
+      }
+    }
+    else {
+      $lang_str[$k] = $v;
+    }
+  }
+}
+
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
   global $modulekit;
 
   $lang_str=array();
 
-  @include(modulekit_file("modulekit-lang", "lang/base_{$lang}.php"));
-  @include(modulekit_file("modulekit-lang", "lang/lang_{$lang}.php"));
-  @include("lang/tags_{$lang}.php");
+  lang_file_load_json(modulekit_file("modulekit-lang", "lang/base_{$lang}.json"));
+  lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
+  lang_file_load_php("lang/tags_{$lang}.php");
   foreach($modulekit['order'] as $module) {
-    @include(modulekit_file($module, "lang_{$lang}.php"));
-    @include(modulekit_file($module, "lang/{$lang}.php"));
+    $lang_dirs = array('lang');
+    if (array_key_exists('lang_dirs', $modulekit['modules'][$module])) {
+      $lang_dirs = $modulekit['modules'][$module]['lang_dirs'];
+    }
+
+    lang_file_load_json(modulekit_file($module, "lang_{$lang}.json"));
+    lang_file_load_php(modulekit_file($module, "lang_{$lang}.php"));
+
+    foreach ($lang_dirs as $lang_dir) {
+      lang_file_load_json(modulekit_file($module, "{$lang_dir}/{$lang}.json"));
+      lang_file_load_php(modulekit_file($module, "{$lang_dir}/{$lang}.php"));
+    }
   }
   $loaded[]=$lang;
 
-  if(!isset($lang_str['base_language']))
-    $lang_str['base_language']="en";
-  if(in_array($lang_str['base_language'], $loaded))
+  if(!isset($lang_str['lang:base']))
+    $lang_str['lang:base'] = "en";
+  if(in_array($lang_str['lang:base'], $loaded))
     return;
 
+  $base = $lang_str['lang:base'];
+  if(is_array($base))
+    $base = $base['message'];
+
   $save_lang_str=$lang_str;
-  lang_load($lang_str['base_language'], $loaded);
+  lang_load($base, $loaded);
   $lang_str=array_merge($lang_str, $save_lang_str);
 }
 
@@ -208,6 +284,9 @@ function lang_init() {
      array_key_exists('param', $_REQUEST)&&
      array_key_exists('ui_lang', $_REQUEST['param']))
     $ui_lang=$_REQUEST['param']['ui_lang'];
+  if (!isset($ui_lang) && isset($_SESSION) && array_key_exists('ui_lang', $_SESSION)) {
+    $ui_lang = $_SESSION['ui_lang'];
+  }
   if(!isset($ui_lang)&&array_key_exists('ui_lang', $_COOKIE))
     $ui_lang=$_COOKIE['ui_lang'];
   if(!isset($ui_lang))
@@ -216,7 +295,7 @@ function lang_init() {
     $ui_lang=$languages[0];
 
   // Load language files
-  @include modulekit_file("modulekit-lang", "lang/list.php");
+  $language_list = json_decode(file_get_contents(modulekit_file("modulekit-lang", "lang/list.json")), true);
 
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
