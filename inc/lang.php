@@ -293,7 +293,7 @@ function lang_init() {
     $ui_lang=$languages[0];
 
   // Load language files
-  @include modulekit_file("modulekit-lang", "lang/list.php");
+  $language_list = json_decode(file_get_contents(modulekit_file("modulekit-lang", "lang/list.json")), true);
 
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
