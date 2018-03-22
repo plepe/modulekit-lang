@@ -1,4 +1,5 @@
 {
+    "lang:current": "Polski",
     "lang:de": "Niemiecki",
     "lang:bg": "Bułgarski",
     "lang:cs": "Czeski",
@@ -11,14 +12,10 @@
     "lang:ja": "Japoński",
     "lang:hu": "Węgierski",
     "lang:nl": "Duński",
-    "lang:ast": {
-        "description": "message 'lang:ast' not translated"
-    },
+    "lang:ast": "",
     "lang:el": "Grecki",
     "lang:pl": "Polski",
-    "lang:ca": {
-        "description": "message 'lang:ca' not translated"
-    },
+    "lang:ca": "",
     "lang:sr": "Serbski",
     "lang:ro": "Rumuński",
     "lang:da": "Duński",

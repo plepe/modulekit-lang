@@ -1,12 +1,11 @@
 {
+    "lang:current": "Romanian",
     "lang:de": "Germana",
     "lang:bg": "Bulgara",
     "lang:cs": "Cehă",
     "lang:en": "Engleza",
     "lang:es": "Spaniola",
-    "lang:et": {
-        "description": "message 'lang:et' not translated"
-    },
+    "lang:et": "",
     "lang:it": "Italiana",
     "lang:fr": "Franceza",
     "lang:uk": "Uraineana",
@@ -14,9 +13,7 @@
     "lang:ja": "Japoneza",
     "lang:hu": "Maghiara",
     "lang:nl": "Olandeza",
-    "lang:ast": {
-        "description": "message 'lang:ast' not translated"
-    },
+    "lang:ast": "",
     "lang:el": "Greaca",
     "lang:pl": "Poloneza",
     "lang:ca": "Catalana",
@@ -24,7 +21,5 @@
     "lang:ro": "Română",
     "lang:da": "Daneza",
     "lang:pt": "Portugheza",
-    "lang:pt-br": {
-        "description": "message 'lang:pt-br' not translated"
-    }
+    "lang:pt-br": ""
 }

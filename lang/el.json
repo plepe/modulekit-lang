@@ -1,4 +1,5 @@
 {
+    "lang:current": "Ελληνικά",
     "lang:de": "Γερμανικά",
     "lang:bg": "Βουλγαρικά",
     "lang:cs": "Τσέχικα",
@@ -12,9 +13,7 @@
     "lang:ja": "Ιαπωνικά",
     "lang:hu": "Ουγγρικά",
     "lang:nl": "Ολλανδικά",
-    "lang:ast": {
-        "description": "message 'lang:ast' not translated"
-    },
+    "lang:ast": "",
     "lang:el": "Ελληνικά",
     "lang:pl": "Πολωνικά",
     "lang:ca": "Καταλανικά",

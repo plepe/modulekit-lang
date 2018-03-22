@@ -1,10 +1,10 @@
 {
+    "lang:current": "Deutsch",
     "lang:de": "Deutsch",
-    "lang:bg": "Bulgarisch",
+    "lang:bg": "BulgariSK",
     "lang:cs": "Tschechisch",
     "lang:en": "Englisch",
     "lang:es": "Spanisch",
-    "lang:et": "Estnisch",
     "lang:it": "Italienisch",
     "lang:fr": "Französisch",
     "lang:uk": "Ukrainisch",
@@ -15,10 +15,5 @@
     "lang:ast": "Asturisch",
     "lang:el": "Griechisch",
     "lang:pl": "Polnisch",
-    "lang:ca": "Katalanisch",
-    "lang:sr": "Serbisch",
-    "lang:ro": "Rumänisch",
-    "lang:da": "Dänisch",
-    "lang:pt": "Portugiesisch",
-    "lang:pt-br": "Portugiesisch (Brasilien)"
+    "lang:ca": "Katalanisch"
 }

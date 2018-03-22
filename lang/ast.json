@@ -1,10 +1,10 @@
 {
+    "lang:current": "Asturianu",
     "lang:de": "Alemán",
     "lang:bg": "Búlgaru",
     "lang:cs": "Checu",
     "lang:en": "Inglés",
     "lang:es": "Español",
-    "lang:et": "Estoniu",
     "lang:it": "Italianu",
     "lang:fr": "Francés",
     "lang:uk": "Ucraín",
@@ -15,10 +15,5 @@
     "lang:ast": "Asturianu",
     "lang:el": "Griegu",
     "lang:pl": "Polacu",
-    "lang:ca": "Catalán",
-    "lang:sr": "Serbiu",
-    "lang:ro": "Rumanu",
-    "lang:da": "Danés",
-    "lang:pt": "Portugués",
-    "lang:pt-br": "Portugués (Brasil)"
+    "lang:ca": "Catalán"
 }
