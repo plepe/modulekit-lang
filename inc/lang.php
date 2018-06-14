@@ -216,9 +216,11 @@ function lang_file_load_php($file) {
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
+  global $lang_non_translated;
   global $modulekit;
 
   $lang_str=array();
+  $lang_non_translated = array();
 
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/base_{$lang}.json"));
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
@@ -250,6 +252,14 @@ function lang_load($lang, $loaded=array()) {
 
   $save_lang_str=$lang_str;
   lang_load($base, $loaded);
+
+  // check which lang strings from base language are missing in the main language
+  foreach ($lang_str as $k => $v) {
+    if (!array_key_exists($k, $save_lang_str)) {
+      $lang_non_translated[$k] = 0;
+    }
+  }
+
   $lang_str=array_merge($lang_str, $save_lang_str);
 }
 
@@ -259,6 +269,7 @@ function lang_code_check($lang) {
 
 function lang_init() {
   global $lang_str;
+  global $lang_non_translated;
   global $ui_lang;
   global $language_list;
   global $languages;
@@ -300,7 +311,8 @@ function lang_init() {
   $cache_file="{$modulekit_cache_dir}lang_{$ui_lang}.data";
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
   if(file_exists($cache_file)) {
-    $lang_str=unserialize(file_get_contents($cache_file));
+    $vars = unserialize(file_get_contents($cache_file));
+    $lang_str = $vars['lang_str'];
   }
   else {
     lang_load($ui_lang);
@@ -310,20 +322,32 @@ function lang_init() {
       $lang_str["lang_native:".$abbr]=$lang;
     }
 
+    $vars=array(
+      "ui_lang"                   => $ui_lang,
+      "lang_str"                  => $lang_str,
+      "language_list"             => $language_list,
+      "languages"                 => $languages,
+      "lang_genders"              => $lang_genders,
+      "lang_non_translated"       => $lang_non_translated,
+    );
+
     if(is_writeable($modulekit_cache_dir)) {
-      file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file, serialize($vars));
       file_put_contents($cache_file_js, "var lang_str=".json_encode($lang_str).";\n");
     }
   }
 
-  $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
-  if(file_exists($cache_file_js))
+  if(file_exists($cache_file_js)) {
+    unset($vars['lang_str']);
     add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
-  else
-    $vars['lang_str']=$lang_str;
+  }
 
   html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
+}
+
+function ajax_lang_report_non_translated ($param, $post) {
+  call_hooks('lang_report_non_translated', $post, $param['ui_lang']);
 }
 
 register_hook("init", "lang_init");
