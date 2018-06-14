@@ -254,7 +254,7 @@ function lang_load($lang, $loaded=array()) {
   // check which lang strings from base language are missing in the main language
   foreach ($lang_str as $k => $v) {
     if (!array_key_exists($k, $save_lang_str)) {
-      $lang_non_translated[$k] = 1;
+      $lang_non_translated[$k] = 0;
     }
   }
 
