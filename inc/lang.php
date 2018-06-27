@@ -124,6 +124,19 @@ function lang() {
   return vsprintf($l, $params);
 }
 
+function lang_enumerate ($list) {
+  global $lang_str;
+
+  if (sizeof($list) > 1) {
+    return implode($lang_str['enumerate_join'], array_slice($list, 0, -1)) . $lang_str['enumerate_last'] . end($list);
+  }
+  else if (sizeof($list) > 0) {
+    return $list[0];
+  }
+
+  return '';
+}
+
 // replace all {...} by their translations
 function lang_parse($str, $count=0) {
   $ret=$str;

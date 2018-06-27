@@ -21,5 +21,7 @@
     "lang:ro": "Romanian",
     "lang:da": "Danish",
     "lang:pt": "Portugese",
-    "lang:pt-br": "Portugese (Brazil)"
+    "lang:pt-br": "Portugese (Brazil)",
+    "enumerate_join": ", ",
+    "enumerate_last": " and "
 }

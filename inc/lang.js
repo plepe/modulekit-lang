@@ -118,6 +118,12 @@ function lang(str, count) {
   return vsprintf(el, vars);
 }
 
+function lang_enumerate (list) {
+  if (list.length > 1) {
+    return list.slice(0, -1).join(lang_str.enumerate_join) +  lang_str.enumerate_last + list.slice(-1)[0]
+  }
+}
+
 function lang_dom(str, count) {
   var el=lang_element(str, count);
   var ret="";
