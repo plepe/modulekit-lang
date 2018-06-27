@@ -1,4 +1,6 @@
 {
+    "enumerate_join": ", ",
+    "enumerate_last": " and ",
     "lang:ast": "Asturian",
     "lang:base": "",
     "lang:bg": "Bulgarian",
