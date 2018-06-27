@@ -157,6 +157,11 @@ function lang_enumerate (list) {
   if (list.length > 1) {
     return list.slice(0, -1).join(lang_str.enumerate_join) +  lang_str.enumerate_last + list.slice(-1)[0]
   }
+  else if (list.length > 0) {
+    return list[0]
+  }
+
+  return ''
 }
 
 function lang_dom(str, count) {
