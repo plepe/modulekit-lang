@@ -1,6 +1,6 @@
 {
-    "enumerate_join": "",
-    "enumerate_last": "",
+    "enumerate_join": "Use this string for joining enumerations up to next to last. E.g.: \", \" (spaces are relevant).",
+    "enumerate_last": "Use this string for the last join of an enumeration, e.g. \" and \".",
     "lang:ast": "",
     "lang:base": "Use this language if a string has not been translated",
     "lang:bg": "",
