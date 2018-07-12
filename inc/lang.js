@@ -83,7 +83,7 @@ function lang_element(str, count) {
     // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
     return l;
   }
-  else if(l=str.match(/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/)) {
+  else if(l=str.match(/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/)) {
     return l[3];
   }
   else if(l=str.match(/^tag:([^><=!]*)$/)) {

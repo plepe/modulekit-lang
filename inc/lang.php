@@ -75,7 +75,7 @@ function lang() {
 	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
 	$key=$k;
       }
-      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
+      else if(preg_match("/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/", $key, $m)) {
 	$key=$m[3];
       }
       elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
