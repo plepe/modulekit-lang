@@ -2,7 +2,7 @@
 <?php
 require('../inc/build_statistic.php');
 
-$stat = build_statistic();
+$stat = build_statistic('.');
 
 $template_count = $stat[''];
 foreach ($stat as $lang => $count) {
