@@ -2,7 +2,12 @@
 <?php
 require(dirname(dirname(__FILE__)) . '/inc/build_statistic.php');
 
-$stat = build_statistic('.');
+$path = '.';
+if (sizeof($argv) > 1) {
+  $path = $argv[1];
+}
+
+$stat = build_statistic($path);
 
 $template_count = $stat[''];
 foreach ($stat as $lang => $count) {
