@@ -78,7 +78,10 @@ function lang_element(str, options) {
     }
   }
 
-  if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
+  if (options.default) {
+    return options.default
+  }
+  else if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
     // Boolean values, see:
     // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
     return l;

@@ -74,12 +74,15 @@ function lang() {
       }
     }
     elseif(!isset($lang_str[$key])) {
-      if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
+      if (isset($options['default'])) {
+        $key = $options['default'];
+      }
+      elseif((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
 	// Boolean values, see:
 	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
 	$key=$k;
       }
-      else if(preg_match("/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/", $key, $m)) {
+      elseif(preg_match("/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/", $key, $m)) {
 	$key=$m[3];
       }
       elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
