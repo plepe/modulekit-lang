@@ -10,13 +10,17 @@ function lang() {
   $offset=1;
 
   $key=func_get_arg(0);
-  if((sizeof(func_get_args())>1)&&is_numeric(func_get_arg(1))) {
+  if((sizeof(func_get_args())>1) && (is_numeric(func_get_arg(1)) || is_array(func_get_arg(1)))) {
     $offset++;
-    $count=func_get_arg(1);
+    $options = func_get_arg(1);
   }
   else
-    $count=1;
+    $options = array('count' => 1);
   $params=array_slice(func_get_args(), $offset);
+
+  if (is_numeric($options)) {
+    $options = array('count' => $options);
+  }
 
   // if 'key' is an array, translations are passed as array values, like:
   // array(
@@ -44,7 +48,7 @@ function lang() {
     if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
       $prefix = func_get_arg(1);
       if(sizeof(func_get_args())>2)
-	$count = func_get_arg(2);
+	$options = func_get_arg(2);
     }
 
     if(isset($key["{$prefix}{$ui_lang}"]))
@@ -64,7 +68,7 @@ function lang() {
       $key_exp=explode(";", $m[2]);
       if(sizeof($key_exp)>1) {
 	foreach($key_exp as $key_index=>$key_value) {
-	  $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+	  $key_exp[$key_index]=lang("$m[1]/$key_value", $options);
 	}
 	$l=implode(", ", $key_exp);
       }
@@ -99,7 +103,7 @@ function lang() {
         $l=$l[0];
       }
       else {
-        if ($count===0 || $count!=1)
+        if ($options['count'] === 0 || $options['count'] !=1)
           $i=1;
         else
           $i=0;
@@ -112,7 +116,7 @@ function lang() {
       }
     }
     else {
-      if (array_key_exists('!=1', $l) && ($count === 0 || $count > 1)) {
+      if (array_key_exists('!=1', $l) && ($options['count'] === 0 || $options['count'] > 1)) {
         $l = $l['!=1'];
       }
       elseif (array_key_exists('message', $l)) {
