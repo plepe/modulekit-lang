@@ -261,7 +261,7 @@ function lang_report_non_translated () {
 register_hook("options_change", lang_change);
 
 register_hook('init', function () {
-  if (modulekit_loaded('modulekit-ajax')) {
+  if (typeof modulekit_loaded === 'function' && modulekit_loaded('modulekit-ajax')) {
     window.setInterval(lang_report_non_translated, 300000)
   }
 })
