@@ -26,7 +26,7 @@ function lang_shall_count_translations() {
   return true
 }
 
-function lang_element(str, count) {
+function lang_element(str, options) {
   var l;
   var non_translated_counted = false
 
@@ -42,7 +42,7 @@ function lang_element(str, count) {
 
     var i;
     if(l.length && l.length>1) {
-      if((count===0)||(count>1))
+      if((options.count===0)||(options.count>1))
         i=1;
       else
         i=0;
@@ -57,7 +57,7 @@ function lang_element(str, count) {
       return l[0];
     }
     else if (typeof l === 'object') {
-      if ('!=1' in l && (count === 0 || count > 1)) {
+      if ('!=1' in l && (options.count === 0 || options.count > 1)) {
         return l['!=1']
       }
 
@@ -78,7 +78,10 @@ function lang_element(str, count) {
     }
   }
 
-  if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
+  if (options.default) {
+    return options.default
+  }
+  else if((l=str.match(/^tag:([^=]+)=(.*)$/))&&(l=lang_str["tag:*="+l[2]])) {
     // Boolean values, see:
     // http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
     return l;
@@ -96,7 +99,7 @@ function lang_element(str, count) {
   return str;
 }
 
-function lang(str, count) {
+function lang(str, options) {
   var el;
 
   // if 'key' is an array, translations are passed as array values, like:
@@ -117,11 +120,22 @@ function lang(str, count) {
   //
   // if current language is not defined in the array the first language
   // will be used (in that case 'en').
+  if (typeof options === 'number') {
+    options = { count: options }
+  }
+  if (options === null || typeof options === 'undefined') {
+    options = { count: null }
+  }
+
   if(typeof str=="object") {
     prefix = ""
     if((arguments.length>1) && (typeof arguments[1] == "string")) {
       prefix = arguments[1];
-      count = arguments[2];
+      options = arguments[2];
+    }
+
+    if (typeof options === 'number') {
+      options = { count: options }
     }
 
     if(typeof str[prefix + ui_lang] !== "undefined") {
@@ -140,7 +154,7 @@ function lang(str, count) {
     }
   }
   else
-    el=lang_element(str, count);
+    el=lang_element(str, options);
 
   if(arguments.length<=2)
     return el;
@@ -247,7 +261,7 @@ function lang_report_non_translated () {
 register_hook("options_change", lang_change);
 
 register_hook('init', function () {
-  if (modulekit_loaded('modulekit-ajax')) {
+  if (typeof modulekit_loaded === 'function' && modulekit_loaded('modulekit-ajax')) {
     window.setInterval(lang_report_non_translated, 300000)
   }
 })
