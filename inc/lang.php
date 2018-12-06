@@ -10,13 +10,17 @@ function lang() {
   $offset=1;
 
   $key=func_get_arg(0);
-  if((sizeof(func_get_args())>1)&&is_numeric(func_get_arg(1))) {
+  if((sizeof(func_get_args())>1) && (is_numeric(func_get_arg(1)) || is_array(func_get_arg(1)))) {
     $offset++;
-    $count=func_get_arg(1);
+    $options = func_get_arg(1);
   }
   else
-    $count=1;
+    $options = array('count' => 1);
   $params=array_slice(func_get_args(), $offset);
+
+  if (is_numeric($options)) {
+    $options = array('count' => $options);
+  }
 
   // if 'key' is an array, translations are passed as array values, like:
   // array(
@@ -44,7 +48,7 @@ function lang() {
     if((sizeof(func_get_args()) > 1) && (is_string(func_get_arg(1)))) {
       $prefix = func_get_arg(1);
       if(sizeof(func_get_args())>2)
-	$count = func_get_arg(2);
+	$options = func_get_arg(2);
     }
 
     if(isset($key["{$prefix}{$ui_lang}"]))
@@ -64,18 +68,21 @@ function lang() {
       $key_exp=explode(";", $m[2]);
       if(sizeof($key_exp)>1) {
 	foreach($key_exp as $key_index=>$key_value) {
-	  $key_exp[$key_index]=lang("$m[1]/$key_value", $count);
+	  $key_exp[$key_index]=lang("$m[1]/$key_value", $options);
 	}
 	$l=implode(", ", $key_exp);
       }
     }
     elseif(!isset($lang_str[$key])) {
-      if((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
+      if (isset($options['default'])) {
+        $key = $options['default'];
+      }
+      elseif((preg_match("/^tag:([^=]*)=(.*)$/", $key, $m))&&($k=$lang_str["tag:*={$m[2]}"])) {
 	// Boolean values, see:
 	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
 	$key=$k;
       }
-      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
+      elseif(preg_match("/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/", $key, $m)) {
 	$key=$m[3];
       }
       elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
@@ -99,7 +106,7 @@ function lang() {
         $l=$l[0];
       }
       else {
-        if ($count===0 || $count!=1)
+        if ($options['count'] === 0 || $options['count'] !=1)
           $i=1;
         else
           $i=0;
@@ -112,7 +119,7 @@ function lang() {
       }
     }
     else {
-      if (array_key_exists('!=1', $l) && ($count === 0 || $count > 1)) {
+      if (array_key_exists('!=1', $l) && ($options['count'] === 0 || $options['count'] > 1)) {
         $l = $l['!=1'];
       }
       elseif (array_key_exists('message', $l)) {
@@ -122,6 +129,19 @@ function lang() {
   }
 
   return vsprintf($l, $params);
+}
+
+function lang_enumerate ($list) {
+  global $lang_str;
+
+  if (sizeof($list) > 1) {
+    return implode($lang_str['enumerate_join'], array_slice($list, 0, -1)) . $lang_str['enumerate_last'] . end($list);
+  }
+  else if (sizeof($list) > 0) {
+    return $list[0];
+  }
+
+  return '';
 }
 
 // replace all {...} by their translations
@@ -177,7 +197,7 @@ function lang_file_load_json($file) {
 
   foreach($strs as $k=>$v) {
     // if no 'message' => not translated, therefore ignore
-    if(is_string($v) || (array_key_exists('message', $v))) {
+    if((is_string($v) && $v !== "") || (is_array($v) && array_key_exists('message', $v))) {
       $lang_str[$k] = $v;
     }
   }
@@ -216,9 +236,11 @@ function lang_file_load_php($file) {
 
 function lang_load($lang, $loaded=array()) {
   global $lang_str;
+  global $lang_non_translated;
   global $modulekit;
 
   $lang_str=array();
+  $lang_non_translated = array();
 
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/base_{$lang}.json"));
   lang_file_load_json(modulekit_file("modulekit-lang", "lang/lang_{$lang}.json"));
@@ -239,17 +261,25 @@ function lang_load($lang, $loaded=array()) {
   }
   $loaded[]=$lang;
 
-  if(!isset($lang_str['base_language']))
-    $lang_str['base_language']="en";
-  if(in_array($lang_str['base_language'], $loaded))
+  if(!isset($lang_str['lang:base']))
+    $lang_str['lang:base'] = "en";
+  if(in_array($lang_str['lang:base'], $loaded))
     return;
 
-  $base = $lang_str['base_language'];
+  $base = $lang_str['lang:base'];
   if(is_array($base))
     $base = $base['message'];
 
   $save_lang_str=$lang_str;
   lang_load($base, $loaded);
+
+  // check which lang strings from base language are missing in the main language
+  foreach ($lang_str as $k => $v) {
+    if (!array_key_exists($k, $save_lang_str)) {
+      $lang_non_translated[$k] = 0;
+    }
+  }
+
   $lang_str=array_merge($lang_str, $save_lang_str);
 }
 
@@ -259,9 +289,8 @@ function lang_code_check($lang) {
 
 function lang_init() {
   global $lang_str;
-  global $ui_lang;
-  global $language_list;
   global $languages;
+  global $language_list;
   global $design_hidden;
   global $lang_genders;
   global $version_string;
@@ -297,14 +326,13 @@ function lang_init() {
   // Load language files
   $language_list = json_decode(file_get_contents(modulekit_file("modulekit-lang", "lang/list.json")), true);
 
-  $lang_str = lang_update_cache($modulekit_cache_dir, $ui_lang);
+  $vars = lang_update_cache($modulekit_cache_dir, $ui_lang);
 
   $cache_file_js="{$modulekit_cache_dir}lang_{$ui_lang}.js";
-  $vars=array("ui_lang"=>$ui_lang, "language_list"=>$language_list, "languages"=>$languages, "lang_genders"=>$lang_genders);
-  if(file_exists($cache_file_js))
+  if(file_exists($cache_file_js)) {
+    unset($vars['lang_str']);
     add_html_header("<script type='text/javascript' src='{$cache_file_js}?{$modulekit['version']}'></script>");
-  else
-    $vars['lang_str']=$lang_str;
+  }
 
   html_export_var($vars);
   add_html_header("<meta http-equiv=\"content-language\" content=\"{$ui_lang}\">");
@@ -313,13 +341,18 @@ function lang_init() {
 function lang_update_cache ($dir, $lang) {
   global $lang_str;
   global $language_list;
+  global $lang_non_translated;
+  global $language_list;
+  global $languages;
+  global $lang_genders;
+  global $modulekit_cache_dir;
 
   $cache_file = "{$dir}lang_{$lang}.data";
   $cache_file_js = "{$dir}lang_{$lang}.js";
   $cache_file_json = "{$dir}lang_{$lang}.json";
 
   if (file_exists($cache_file)) {
-    $lang_str = unserialize(file_get_contents($cache_file));
+    $vars = unserialize(file_get_contents($cache_file));
   }
   else {
     lang_load($lang);
@@ -329,14 +362,27 @@ function lang_update_cache ($dir, $lang) {
       $lang_str["lang_native:{$abbr}"] = $lang_id;
     }
 
+    $vars=array(
+      "ui_lang"                   => $lang,
+      "lang_str"                  => $lang_str,
+      "language_list"             => $language_list,
+      "languages"                 => $languages,
+      "lang_genders"              => $lang_genders,
+      "lang_non_translated"       => $lang_non_translated,
+    );
+
     if(is_writeable($dir)) {
-      file_put_contents($cache_file, serialize($lang_str));
+      file_put_contents($cache_file, serialize($vars));
       file_put_contents($cache_file_js, "var lang_str=" . json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES) . ";");
       file_put_contents($cache_file_json, json_encode($lang_str, JSON_FORCE_OBJECT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
     }
   }
 
-  return $lang_str;
+  return $vars;
+}
+
+function ajax_lang_report_non_translated ($param, $post) {
+  call_hooks('lang_report_non_translated', $post, $param['ui_lang']);
 }
 
 register_hook("init", "lang_init");
