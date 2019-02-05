@@ -27,7 +27,7 @@ function build_statistic ($path) {
         continue;
       }
 
-      if (is_array($v) && !array_key_exists('message', $v)) {
+      if (is_array($v) && (!array_key_exists('message', $v) || $v['message'] === '')) {
         continue;
       }
 
