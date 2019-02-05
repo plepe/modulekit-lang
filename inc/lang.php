@@ -189,6 +189,10 @@ function lang_file_load_json($file) {
   $strs = json_decode(file_get_contents($file), true);
 
   foreach($strs as $k=>$v) {
+    if (is_array($v) && array_key_exists('description', $v)) {
+      unset($v['description']);
+    }
+
     // if no 'message' => not translated, therefore ignore
     if((is_string($v) && $v !== "") || (array_key_exists('message', $v) && $v['message'] !== "")) {
       $lang_str[$k] = $v;
