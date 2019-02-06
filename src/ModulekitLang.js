@@ -1,11 +1,8 @@
+const fs = require('fs')
+
 class ModulekitLang {
   construct (lang) {
     this.lang = lang
-  }
-
-  load (callback) {
-    this.lang_str = {}
-    callback(null)
   }
 
   lang_shall_count_translations() {
@@ -212,56 +209,60 @@ class ModulekitLang {
     return dom;
   }
 
-  lang_init (callback) {
-    if (typeof languages === 'undefined' || typeof language_list === 'undefined') {
-      var req = new XMLHttpRequest()
-      req.addEventListener('load', function () {
-        if (this.status === 200) {
-          var d = JSON.parse(this.responseText)
-          if (typeof languages === 'undefined') {
-            languages = d.languages
-          }
-          if (typeof language_list === 'undefined') {
-            language_list = d.language_list
-          }
-        } else {
-          languages = [ 'en' ]
-          language_list = {"en":"English"}
-          console.log('error occured when download translation', this)
-        }
+  load (callback) {
+    this.lang_str = undefined
 
-        this.lang_init2(callback)
-      })
-
-      var path = 'dist/'
-      if (typeof modulekit_dist_path !== 'undefined') {
-        path = modulekit_dist_path
-      }
-      req.open('GET', path + '/lang_list.json')
-      req.send()
-      return
+    this.language_list = require('../lang/list.json')
+    if (!global.XMLHttpRequest) {
+      return this.lang_init2(callback)
+    }
+    if (typeof global.languages === 'undefined') {
+      this.languages = Object.keys(this.language_list)
+    } else {
+      this.languages = languages
     }
 
     this.lang_init2(callback)
   }
 
   lang_detect_ui_lang () {
+    if (!global.navigator) {
+      this.ui_lang = 'en'
+      return
+    }
+
     for (var i in navigator.languages) {
       if (languages.indexOf(navigator.languages[i]) !== -1) {
-        ui_lang = navigator.languages[i]
+        this.ui_lang = navigator.languages[i]
         return
       }
     }
 
-    ui_lang = languages[0]
+    this.ui_lang = languages[0]
   }
 
   lang_init2 (callback) {
     if (typeof ui_lang === 'undefined') {
-      lang_detect_ui_lang()
+      this.lang_detect_ui_lang()
     }
 
     if (typeof this.lang_str === 'undefined') {
+      if (typeof global.XMLHttpRequest === 'undefined') {
+        fs.readFile('dist/lang_' + this.ui_lang + '.json',
+          (err, body) => {
+            if (err) {
+              this.lang_str = {}
+              return callback(err)
+            }
+
+            this.lang_str = JSON.parse(body)
+            callback()
+          }
+        )
+
+        return
+      }
+
       var req = new XMLHttpRequest()
       req.addEventListener('load', function () {
         if (this.status === 200) {
