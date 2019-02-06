@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+const ArgumentParser = require('argparse').ArgumentParser
+const cldr = require('cldr')
+const fs = require('fs')
+
+let parser = new ArgumentParser({
+  addHelp: true,
+  description: 'Imports a language definition from the cldr database'
+})
+
+parser.addArgument(
+  'lang',
+  {
+    help: 'Language to import'
+  }
+)
+
+let args = parser.parseArgs()
+
+let lang = args.lang
+let file = 'lang/' + lang + '.json'
+
+let result = {}
+if (fs.existsSync(file)) {
+  result = JSON.parse(fs.readFileSync(file))
+}
+
+let langListFile = JSON.parse(fs.readFileSync('lang/list.json'))
+
+let languageNames = cldr.extractLanguageDisplayNames(lang)
+
+for (let k in languageNames) {
+  result['lang:' + k.replace('_', '-')] = languageNames[k]
+}
+
+if (!('lang:current' in result)) {
+  result['lang:current'] = languageNames[lang]
+}
+if (!('lang:base' in result)) {
+  result['lang:base'] = 'en'
+}
+langListFile[lang] = languageNames[lang]
+
+let listPatterns = cldr.extractListPatterns(lang).default
+result['enumerate_start'] = listPatterns.start
+result['enumerate_middle'] = listPatterns.middle
+result['enumerate_end'] = listPatterns.end
+result['enumerate_2'] = listPatterns[2]
+
+if ('enumerate_join' in result) {
+  delete result.enumerate_join
+}
+if ('enumerate_last' in result) {
+  delete result.enumerate_last
+}
+
+fs.writeFileSync(file, JSON.stringify(order(result), null, '    ') + '\n')
+fs.writeFileSync('lang/list.json', JSON.stringify(order(langListFile), null, '    ') + '\n')
+
+function order (data) {
+  var ret = {}
+  var keys = Object.keys(data)
+  keys.sort()
+
+  for (var i = 0; i < keys.length; i++) {
+    ret[keys[i]] = data[keys[i]]
+  }
+
+  return ret
+}
