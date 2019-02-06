@@ -1,6 +1,8 @@
 {
-    "enumerate_join": "",
-    "enumerate_last": "",
+    "enumerate_2": "{0}, {1}",
+    "enumerate_end": "{0}, {1}",
+    "enumerate_middle": "{0}, {1}",
+    "enumerate_start": "{0}, {1}",
     "lang:ast": "",
     "lang:base": "Use this language if a string has not been translated",
     "lang:bg": "",
