@@ -25,6 +25,8 @@ if (fs.existsSync(file)) {
   result = JSON.parse(fs.readFileSync(file))
 }
 
+let langListFile = JSON.parse(fs.readFileSync('lang/list.json'))
+
 let languageNames = cldr.extractLanguageDisplayNames(lang)
 
 for (let k in languageNames) {
@@ -32,11 +34,12 @@ for (let k in languageNames) {
 }
 
 if (!('lang:current' in result)) {
-  result['lang:current'] = languageNames[args.lang]
+  result['lang:current'] = languageNames[lang]
 }
 if (!('lang:base' in result)) {
   result['lang:base'] = 'en'
 }
+langListFile[lang] = languageNames[lang]
 
 let listPatterns = cldr.extractListPatterns(lang).default
 result['enumerate_start'] = listPatterns.start
@@ -51,12 +54,17 @@ if ('enumerate_last' in result) {
   delete result.enumerate_last
 }
 
-var ret = {}
-var keys = Object.keys(result)
-keys.sort()
+fs.writeFileSync(file, JSON.stringify(order(result), null, '    ') + '\n')
+fs.writeFileSync('lang/list.json', JSON.stringify(order(langListFile), null, '    ') + '\n')
 
-for (var i = 0; i < keys.length; i++) {
-  ret[keys[i]] = result[keys[i]]
+function order (data) {
+  var ret = {}
+  var keys = Object.keys(data)
+  keys.sort()
+
+  for (var i = 0; i < keys.length; i++) {
+    ret[keys[i]] = data[keys[i]]
+  }
+
+  return ret
 }
-
-fs.writeFileSync(file, JSON.stringify(ret, null, '    ') + '\n')
