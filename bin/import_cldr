@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+const ArgumentParser = require('argparse').ArgumentParser
+const cldr = require('cldr')
+const fs = require('fs')
+
+let parser = new ArgumentParser({
+  addHelp: true,
+  description: 'Imports a language definition from the cldr database'
+})
+
+parser.addArgument(
+  'lang',
+  {
+    help: 'Language to import'
+  }
+)
+
+let args = parser.parseArgs()
+
+let lang = args.lang
+let file = 'lang/' + lang + '.json'
+
+let result = JSON.parse(fs.readFileSync(file))
+
+let languageNames = cldr.extractLanguageDisplayNames(lang)
+
+for (let k in languageNames) {
+  result['lang:' + k] = languageNames[k]
+}
+
+if (!('lang:current') in result) {
+  result['lang:current'] = languageNames[args.lang]
+}
+if (!('lang:base') in result) {
+  result['lang:base'] = 'en'
+}
+
+fs.writeFileSync(file, JSON.stringify(result, null, '    ') + '\n')

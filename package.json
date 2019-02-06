@@ -10,6 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/plepe/modulekit-lang.git"
   },
+  "dependencies": {
+    "argparse": "^1.0.10",
+    "cldr": "^4.13.0"
+  },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0",
   "bugs": {
