@@ -28,7 +28,7 @@ if (fs.existsSync(file)) {
 let languageNames = cldr.extractLanguageDisplayNames(lang)
 
 for (let k in languageNames) {
-  result['lang:' + k] = languageNames[k]
+  result['lang:' + k.replace('_', '-')] = languageNames[k]
 }
 
 if (!('lang:current') in result) {
