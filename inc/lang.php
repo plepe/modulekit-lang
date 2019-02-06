@@ -75,7 +75,7 @@ function lang() {
 	// http://wiki.openstreetmap.org/wiki/Proposed_features/boolean_values
 	$key=$k;
       }
-      else if(preg_match("/^tag:([^><=!]*)(=|>|<|>=|<=|!=)([^><=!].*)$/", $key, $m)) {
+      else if(preg_match("/^tag:(.*)(=|>|<|>=|<=|!=)([^><=!]*)$/", $key, $m)) {
 	$key=$m[3];
       }
       elseif(preg_match("/^tag:([^><=!]*)$/", $key, $m)) {
@@ -189,9 +189,21 @@ function lang_file_load_json($file) {
   $strs = json_decode(file_get_contents($file), true);
 
   foreach($strs as $k=>$v) {
+    if (is_array($v) && array_key_exists('description', $v)) {
+      unset($v['description']);
+    }
+
     // if no 'message' => not translated, therefore ignore
-    if((is_string($v) && $v !== "") || (array_key_exists('message', $v))) {
+    if(is_string($v) && $v !== "") {
       $lang_str[$k] = $v;
+    }
+
+    if (is_array($v) && (array_key_exists('message', $v) && $v['message'] !== "")) {
+      if (sizeof($v) === 1) { // when only message present, compact to string
+        $lang_str[$k] = $v['message'];
+      } else {
+        $lang_str[$k] = $v;
+      }
     }
   }
 }

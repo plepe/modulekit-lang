@@ -1,0 +1,17 @@
+#!/usr/bin/php
+<?php
+require(dirname(dirname(__FILE__)) . '/inc/build_statistic.php');
+
+$path = '.';
+if (sizeof($argv) > 1) {
+  $path = $argv[1];
+}
+
+$stat = build_statistic($path);
+
+$template_count = $stat[''];
+foreach ($stat as $lang => $count) {
+  if ($lang !== '') {
+    printf("%s\t%d\t%.2f\n", $lang, $count, $count / $template_count * 100);
+  }
+}
