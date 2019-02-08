@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "argparse": "^1.0.10",
+    "async": "^2.6.1",
     "cldr": "^4.13.0"
   },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",

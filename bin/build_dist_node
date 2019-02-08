@@ -1,15 +1,85 @@
 #!/usr/bin/env node
 const child_process = require('child_process')
-let toInclude = []
+const async = require('async')
+const fs = require('fs')
 
-function checkModule (mod) {
-  if ('translationPath' in mod) {
-    toInclude.push(mod.path + '/' + mod.translationPath)
-  }
+function checkModule (mod, callback) {
+  let allStrings = {}
+  let thisModuleStrings = {}
 
-  for (let k in mod.dependencies) {
-    checkModule(mod.dependencies[k])
-  }
+  async.parallel([
+    // Step 1: descend into sub modules
+    (done) => {
+      async.each(mod.dependencies, (subModule, done) => {
+        checkModule(subModule, (err, result) => {
+          if (err) {
+            return done(err)
+          }
+
+          for (let lang in result) {
+            if (!(lang in allStrings)) {
+              allStrings[lang] = {}
+            }
+
+            for (let k in result[lang]) {
+              allStrings[lang][k] = result[lang][k]
+            }
+          }
+
+          done()
+        })
+      }, done)
+    },
+    // Step 2: from this module, load all translations
+    (done) => {
+      if (!('translationPath' in mod)) {
+        return done()
+      }
+
+      let path = mod.path + '/' + mod.translationPath
+      fs.readdir(path, (err, files) => {
+        if (err) {
+          return done(err)
+        }
+
+        async.each(files, (file, done) => {
+          if (file.match(/^\./) || (!file.match(/\.json$/))) {
+            return
+          }
+
+          let m = file.match(/^([a-z]{2,3}(\-[a-z]+)?)\.json$/)
+          if (!m) {
+            return done()
+          }
+          let lang = m[1]
+
+          fs.readFile(path + '/' + file, (err, content) => {
+            if (err) {
+              return done(err)
+            }
+
+            thisModuleStrings[lang] = JSON.parse(content)
+
+            done()
+          })
+        }, done)
+      })
+    }
+  ], (err) => {
+    // Step 3: merge strings from sub modules with current module
+    for (let lang in thisModuleStrings) {
+      if (!(lang in allStrings)) {
+        allStrings[lang] = {}
+      }
+
+      for (let k in thisModuleStrings[lang]) {
+        allStrings[lang][k] = thisModuleStrings[lang][k]
+      }
+    }
+
+    // Finished!
+    callback(err, allStrings)
+  })
 }
 
 child_process.exec('npm ll --json', { maxBuffer: 500000 }, (err, output) => {
@@ -19,6 +89,7 @@ child_process.exec('npm ll --json', { maxBuffer: 500000 }, (err, output) => {
 
   output = JSON.parse(output)
 
-  checkModule(output)
-  console.log(toInclude)
+  checkModule(output, (err, result) => {
+    console.log(result)
+  })
 })
