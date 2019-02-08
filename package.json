@@ -15,6 +15,9 @@
     "async": "^2.6.1",
     "cldr": "^4.13.0"
   },
+  "bin": {
+    "build_dist_node": "./bin/build_dist_node"
+  },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0",
   "bugs": {
