@@ -3,6 +3,18 @@ const child_process = require('child_process')
 const async = require('async')
 const fs = require('fs')
 
+function checkPrefixModules (path, callback) {
+  fs.readdir(path, { withFileTypes: true }, (err, files) => {
+    async.each(files, (file, done) => {
+      if (file.name.match(/^\./)) {
+        return done()
+      }
+
+      checkModule(path + '/' + file.name, done)
+    }, callback)
+  })
+}
+
 function checkModule (path, callback) {
   let allStrings = {}
   let thisModuleStrings = {}
@@ -14,6 +26,10 @@ function checkModule (path, callback) {
         async.each(files, (file, done) => {
           if (file.name.match(/^\./)) {
             return done()
+          }
+
+          if (file.name.match(/^@/)) {
+            return checkPrefixModules(path + '/node_modules/' + file.name, done)
           }
 
           let subPath = path + '/node_modules/' + file.name
