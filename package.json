@@ -19,5 +19,6 @@
   "bugs": {
     "url": "https://github.com/plepe/modulekit-lang/issues"
   },
+  "translationPath": "lang/",
   "homepage": "https://github.com/plepe/modulekit-lang#readme"
 }

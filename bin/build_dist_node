@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+const child_process = require('child_process')
+let toInclude = []
+
+function checkModule (mod) {
+  if ('translationPath' in mod) {
+    toInclude.push(mod.path + '/' + mod.translationPath)
+  }
+
+  for (let k in mod.dependencies) {
+    checkModule(mod.dependencies[k])
+  }
+}
+
+child_process.exec('npm ll --json', { maxBuffer: 500000 }, (err, output) => {
+  if (err) {
+    throw err
+  }
+
+  output = JSON.parse(output)
+
+  checkModule(output)
+  console.log(toInclude)
+})
