@@ -3,6 +3,8 @@ const child_process = require('child_process')
 const async = require('async')
 const fs = require('fs')
 
+const copyLangStr = require('../src/copyLangStr')
+
 function checkPrefixModules (path, callback) {
   fs.readdir(path, { withFileTypes: true }, (err, files) => {
     async.each(files, (file, done) => {
@@ -38,15 +40,7 @@ function checkModule (path, callback) {
               return done(err)
             }
 
-            for (let lang in result) {
-              if (!(lang in allStrings)) {
-                allStrings[lang] = {}
-              }
-
-              for (let k in result[lang]) {
-                allStrings[lang][k] = result[lang][k]
-              }
-            }
+            copyLangStr(result, allStrings)
 
             done()
           })
@@ -97,15 +91,7 @@ function checkModule (path, callback) {
     }
   ], (err) => {
     // Step 3: merge strings from sub modules with current module
-    for (let lang in thisModuleStrings) {
-      if (!(lang in allStrings)) {
-        allStrings[lang] = {}
-      }
-
-      for (let k in thisModuleStrings[lang]) {
-        allStrings[lang][k] = thisModuleStrings[lang][k]
-      }
-    }
+    copyLangStr(thisModuleStrings, allStrings)
 
     // Finished!
     callback(err, allStrings)
