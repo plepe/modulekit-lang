@@ -1,4 +1,5 @@
-var lang_str={};
+const hooks = require('modulekit-hooks')
+const { vsprintf } = require('sprintf-js')
 
 function change_language() {
   var ob=document.getElementById("lang_select_form");
@@ -253,17 +254,19 @@ function lang_report_non_translated () {
   }
 }
 
-register_hook("options_change", lang_change);
+hooks.register("options_change", lang_change);
 
-register_hook('init', function () {
+hooks.register('init', function () {
   if (modulekit_loaded('modulekit-ajax')) {
     window.setInterval(lang_report_non_translated, 300000)
   }
 })
 
 // Create twig 'lang' function
-register_hook('twig_init', function() {
+hooks.register('twig_init', function() {
   Twig.extendFunction("lang", function() {
     return lang.apply(this, arguments);
   });
 });
+
+module.exports = { lang }

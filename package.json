@@ -2,7 +2,7 @@
   "name": "modulekit-lang",
   "version": "1.0.0",
   "description": "A language system for Modulekit",
-  "main": "index.js",
+  "main": "inc/lang.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "argparse": "^1.0.10",
-    "cldr": "^4.13.0"
+    "cldr": "^4.13.0",
+    "modulekit-hooks": "plepe/modulekit-hooks",
+    "sprintf-js": "^1.1.2"
   },
   "author": "Stephan Bösch-Plepelits <skunk@xover.mud.at>",
   "license": "GPL-3.0",
