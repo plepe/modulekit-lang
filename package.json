@@ -13,7 +13,9 @@
   "dependencies": {
     "argparse": "^1.0.10",
     "async": "^2.6.1",
-    "cldr": "^4.13.0"
+    "cldr": "^4.13.0",
+    "modulekit-hooks": "^0.1.0",
+    "sprintf-js": "^1.1.2"
   },
   "bin": {
     "build_dist_node": "./bin/build_dist_node"
