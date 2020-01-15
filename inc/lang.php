@@ -317,6 +317,7 @@ function lang_init() {
   global $version_string;
   global $modulekit;
   global $modulekit_cache_dir;
+  global $ui_lang;
 
   // list of available languages
   if((!isset($languages))||(!is_array($languages))) {
