@@ -15,7 +15,6 @@ $include=array(
     "inc/list.php",
   ),
   'js'=>array(
-    "inc/lang.js",
   ),
 );
 
