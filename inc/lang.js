@@ -31,13 +31,17 @@ function lang_element(str, options) {
   var l;
   var non_translated_counted = false
 
+  if (typeof lang_str === 'undefined') {
+    console.log('lang_str not defined (yet!)')
+    return str
+  }
+
   if (lang_shall_count_translations() && str in lang_non_translated) {
     lang_non_translated[str]++
     non_translated_counted = true
   }
 
-
-  if(l=lang_str[str]) {
+  if(l = lang_str[str]) {
     if(typeof(l)=="string")
       return l;
 
