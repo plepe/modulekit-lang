@@ -1,8 +1,9 @@
 const ModulekitLang = require('modulekit-lang')
 
-let currentLang = new ModulekitLang('en')
-currentLang.load(
-  (err) => {
-    console.log(currentLang.lang('lang:de'))
+ModulekitLang.set('en', (err) => {
+  if (err) {
+    console.log(err)
   }
-)
+
+  console.log(ModulekitLang.lang('lang:de'))
+})
