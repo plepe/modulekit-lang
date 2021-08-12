@@ -103,12 +103,28 @@ checkModule('.', (err, result) => {
   }
 
   async.eachOf(result, (str, lang, done) => {
-    fs.writeFile('dist/lang_' + lang + '.json', JSON.stringify(str), done)
+    async.parallel([
+      done => fs.writeFile('dist/lang_' + lang + '.json', JSON.stringify(str), done),
+      done => fs.writeFile('dist/lang_' + lang + '.js', "var lang_str=" + JSON.stringify(str) + ";", done)
+    ], done)
   }, (err) => {
     if (err) {
       return console.log(err)
     }
 
-    console.log('Done')
+    const lang_list = {
+      languages: Object.keys(result)
+    }
+
+    async.parallel([
+      done => fs.writeFile('dist/lang_list.json', JSON.stringify(lang_list), done),
+      done => fs.writeFile('dist/lang_list.js', "var languages=" + Object.keys(result) + ";", done)
+    ], (err) => {
+      if (err) {
+        return console.log(err)
+      }
+
+      console.log('Done')
+    })
   })
 })
