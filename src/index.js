@@ -6,6 +6,10 @@ const loaded = {}
 let current = null
 
 module.exports = {
+  languageList (callback) {
+    callback(null, require('../lang/list.json'))
+  },
+
   set (lang, callback) {
     if (!lang) {
       lang = lang_detect_ui_lang()
