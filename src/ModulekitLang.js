@@ -245,12 +245,12 @@ class ModulekitLang {
       }
 
       var req = new XMLHttpRequest()
-      req.addEventListener('load', function () {
-        if (this.status === 200) {
-          this.lang_str = JSON.parse(this.responseText)
+      req.addEventListener('load', () => {
+        if (req.status === 200) {
+          this.lang_str = JSON.parse(req.responseText)
         } else {
           this.lang_str = {}
-          console.log('error occured when download translation', this)
+          console.log('error occured when download translation', req)
         }
 
         callback()
