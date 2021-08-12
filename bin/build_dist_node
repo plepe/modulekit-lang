@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const child_process = require('child_process')
 const async = require('async')
 const fs = require('fs')
 
@@ -104,7 +103,7 @@ checkModule('.', (err, result) => {
   }
 
   async.eachOf(result, (str, lang, done) => {
-    fs.writeFile('dist/' + lang + '.json', JSON.stringify(str), done)
+    fs.writeFile('dist/lang_' + lang + '.json', JSON.stringify(str), done)
   }, (err) => {
     if (err) {
       return console.log(err)
