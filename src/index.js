@@ -1,10 +1,16 @@
 const ModulekitLang = require('./ModulekitLang')
 
+const lang_detect_ui_lang = require('./lang_detect_ui_lang')
+
 const loaded = {}
 let current = null
 
 module.exports = {
   set (lang, callback) {
+    if (!lang) {
+      lang = lang_detect_ui_lang()
+    }
+
     if (lang in loaded) {
       current = loaded[lang]
       return callback(null)
