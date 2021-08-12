@@ -127,7 +127,7 @@ class ModulekitLang {
     }
 
     if(typeof str=="object") {
-      prefix = ""
+      let prefix = ""
       if((arguments.length>1) && (typeof arguments[1] == "string")) {
         prefix = arguments[1];
         options = arguments[2];
