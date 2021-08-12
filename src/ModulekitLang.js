@@ -1,8 +1,8 @@
 const fs = require('fs')
 
 class ModulekitLang {
-  construct (lang) {
-    this.lang = lang
+  constructor (lang) {
+    this.language = lang
   }
 
   lang_shall_count_translations() {
@@ -137,8 +137,8 @@ class ModulekitLang {
         options = { count: options }
       }
 
-      if(typeof str[prefix + ui_lang] !== "undefined") {
-        el=str[prefix + ui_lang];
+      if(typeof str[prefix + this.language] !== "undefined") {
+        el=str[prefix + this.language];
       }
       else if(typeof str[prefix + 'en'] !== "undefined") {
         el=str[prefix + 'en'];
@@ -225,30 +225,11 @@ class ModulekitLang {
     this.lang_init2(callback)
   }
 
-  lang_detect_ui_lang () {
-    if (!global.navigator) {
-      this.ui_lang = 'en'
-      return
-    }
-
-    for (var i in navigator.languages) {
-      if (languages.indexOf(navigator.languages[i]) !== -1) {
-        this.ui_lang = navigator.languages[i]
-        return
-      }
-    }
-
-    this.ui_lang = languages[0]
-  }
-
   lang_init2 (callback) {
-    if (typeof ui_lang === 'undefined') {
-      this.lang_detect_ui_lang()
-    }
-
     if (typeof this.lang_str === 'undefined') {
       if (typeof global.XMLHttpRequest === 'undefined') {
-        fs.readFile('dist/lang_' + this.ui_lang + '.json',
+
+        fs.readFile('dist/lang_' + this.language + '.json',
           (err, body) => {
             if (err) {
               this.lang_str = {}
@@ -280,7 +261,7 @@ class ModulekitLang {
         path = modulekit_dist_path
       }
 
-      req.open('GET', path + '/lang_' + ui_lang + '.json')
+      req.open('GET', path + '/lang_' + this.language + '.json')
       req.send()
     } else {
       callback()
