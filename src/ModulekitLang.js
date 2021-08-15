@@ -166,7 +166,7 @@ class ModulekitLang {
     return vsprintf(el, vars);
   }
 
-  lang_enumerate (list) {
+  enumerate (list) {
     if (list.length > 2) {
       let result = this.lang_str.enumerate_start.replace('{0}', list[0]).replace('{1}', list[1])
 

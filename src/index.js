@@ -48,5 +48,22 @@ module.exports = {
    */
   lang () {
     return current.lang.apply(current, arguments)
+  },
+
+  /**
+   * Enumerate a list of items (e.g. 'a, b and c')
+   * @param {string[]} list - The list to enumerate
+   * @returns {string} the enumerated list
+   */
+  enumerate () {
+    return current.enumerate.apply(current, arguments)
+  },
+
+  /**
+   * All defined strings in the current language
+   * @returns {object} all defined strings
+   */
+  strings () {
+    return current.lang_str
   }
 }
