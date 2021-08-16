@@ -29,6 +29,7 @@ module.exports = {
     }
 
     const newLang = new ModulekitLang(lang, options)
+    loaded[lang] = newLang
     newLang.load((err) => {
       current = newLang
       callback(err)
