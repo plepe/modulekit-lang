@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { vsprintf } = require('sprintf-js')
 
 class ModulekitLang {
   constructor (lang) {
