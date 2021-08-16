@@ -15,6 +15,7 @@ module.exports = {
 
   /**
    * @param {(string|null)} lang - iso code of language or null for autodetection
+   * @param {object} [options] - additional options
    * @param {function} callback - callback which will be called when loading finished
    */
   set (lang, options, callback) {
