@@ -216,9 +216,16 @@ class ModulekitLang {
   }
 
   load (callback) {
+    this.language_list = require('../lang/list.json')
+
+    if (typeof global.ui_lang !== 'undefined' && global.ui_lang === this.language) {
+      this.language = global.ui_lang
+      this.lang_str = global.lang_str
+      return callback(null)
+    }
+
     this.lang_str = undefined
 
-    this.language_list = require('../lang/list.json')
     if (!global.XMLHttpRequest) {
       return this.lang_init2(callback)
     }

@@ -23,11 +23,6 @@ module.exports = {
       lang = lang_detect_ui_lang()
     }
 
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-
     if (lang in loaded) {
       current = loaded[lang]
       return callback(null)

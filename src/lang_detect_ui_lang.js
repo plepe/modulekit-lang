@@ -1,4 +1,8 @@
 module.exports = function lang_detect_ui_lang () {
+  if (global.ui_lang) {
+    return global.ui_lang
+  }
+
   if (!global.navigator) {
     return 'en'
   }
