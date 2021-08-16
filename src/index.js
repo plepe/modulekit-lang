@@ -17,9 +17,14 @@ module.exports = {
    * @param {(string|null)} lang - iso code of language or null for autodetection
    * @param {function} callback - callback which will be called when loading finished
    */
-  set (lang, callback) {
+  set (lang, options, callback) {
     if (!lang) {
       lang = lang_detect_ui_lang()
+    }
+
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
     }
 
     if (lang in loaded) {
@@ -27,7 +32,7 @@ module.exports = {
       return callback(null)
     }
 
-    const newLang = new ModulekitLang(lang)
+    const newLang = new ModulekitLang(lang, options)
     newLang.load((err) => {
       current = newLang
       callback(err)

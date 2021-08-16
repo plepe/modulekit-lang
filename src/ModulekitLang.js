@@ -2,8 +2,13 @@ const fs = require('fs')
 const { vsprintf } = require('sprintf-js')
 
 class ModulekitLang {
-  constructor (lang) {
+  constructor (lang, options={}) {
     this.language = lang
+    this.options = options
+
+    if (!('distPath' in this.options)) {
+      this.options.distPath = typeof modulekit_dist_path === 'undefined' ? 'dist' : modulekit_dist_path
+    }
   }
 
   lang_shall_count_translations() {
@@ -230,7 +235,7 @@ class ModulekitLang {
     if (typeof this.lang_str === 'undefined') {
       if (typeof global.XMLHttpRequest === 'undefined') {
 
-        fs.readFile('dist/lang_' + this.language + '.json',
+        fs.readFile(this.options.distPath + '/lang_' + this.language + '.json',
           (err, body) => {
             if (err) {
               this.lang_str = {}
@@ -257,12 +262,7 @@ class ModulekitLang {
         callback()
       })
 
-      var path = 'dist/'
-      if (typeof modulekit_dist_path !== 'undefined') {
-        path = modulekit_dist_path
-      }
-
-      req.open('GET', path + '/lang_' + this.language + '.json')
+      req.open('GET', this.options.distPath + '/lang_' + this.language + '.json')
       req.send()
     } else {
       callback()
