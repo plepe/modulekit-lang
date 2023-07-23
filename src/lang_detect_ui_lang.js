@@ -7,9 +7,7 @@ module.exports = function lang_detect_ui_lang () {
     return 'en'
   }
 
-  if (!global.languages) {
-    return 'en'
-  }
+  const languages = global.languages ?? Object.keys(require('../lang/list.json'))
 
   for (var i in navigator.languages) {
     if (languages.indexOf(navigator.languages[i]) !== -1) {
@@ -17,5 +15,5 @@ module.exports = function lang_detect_ui_lang () {
     }
   }
 
-  return languages[0]
+  return (global.languages ?? ['en'])[0]
 }
