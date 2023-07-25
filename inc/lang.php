@@ -121,6 +121,10 @@ function lang() {
     }
   }
 
+  if (!sizeof($params)) {
+    return $l;
+  }
+
   return vsprintf($l, $params);
 }
 
