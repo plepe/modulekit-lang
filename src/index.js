@@ -3,7 +3,8 @@ const ModulekitLang = require('./ModulekitLang')
 const lang_detect_ui_lang = require('./lang_detect_ui_lang')
 
 const loaded = {}
-let current = null
+let current = new ModulekitLang(null, {})
+current.lang_str = {}
 
 module.exports = {
   /**
