@@ -3,6 +3,7 @@ const ModulekitLang = require('./ModulekitLang')
 const lang_detect_ui_lang = require('./lang_detect_ui_lang')
 
 const loaded = {}
+const callbacksSet = {}
 let current = new ModulekitLang(null, {})
 current.lang_str = {}
 
@@ -29,11 +30,19 @@ module.exports = {
       return callback(null)
     }
 
+    if (lang in callbacksSet) {
+      return callbacksSet[lang].push(callback)
+    }
+
+    callbacksSet[lang] = [ callback ]
+
     const newLang = new ModulekitLang(lang, options)
-    loaded[lang] = newLang
     newLang.load((err) => {
+      loaded[lang] = newLang
       current = newLang
-      callback(err)
+
+      callbacksSet[lang].forEach(cb => cb(err))
+      delete callbacksSet[lang]
     })
   },
 
