@@ -22,7 +22,7 @@ module.exports = {
    */
   set (lang, options, callback) {
     if (!lang) {
-      if (current) { return callback() }
+      if (current && current.lanuage) { return callback() }
       lang = lang_detect_ui_lang()
     }
 
