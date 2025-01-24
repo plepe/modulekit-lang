@@ -24,6 +24,7 @@
     "lv": "latviešu valoda",
     "mk": "македонски",
     "mt": "Malti",
+    "nb": "norsk bokmål",
     "nl": "Nederlands",
     "no": "norsk",
     "oc": "occitan",
@@ -37,5 +38,9 @@
     "sq": "shqip",
     "sr": "Српски",
     "sv": "svenska",
-    "uk": "Українська"
+    "ta": "தமிழ்",
+    "tr": "Türkçe",
+    "uk": "Українська",
+    "zh": "中文",
+    "zh-hans": "中文（简体）"
 }
