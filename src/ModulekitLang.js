@@ -14,20 +14,16 @@ class ModulekitLang {
   }
 
   lang_shall_count_translations() {
-    if (typeof lang_non_translated === 'undefined') {
+    if (typeof this.lang_non_translated === 'undefined') {
       return false
     }
 
-    if (lang_non_translated === null) {
+    if (this.lang_non_translated === null) {
       return false
     }
 
-    if (typeof lang_non_translated !== 'object') {
+    if (typeof this.lang_non_translated !== 'object') {
       return false
-    }
-
-    if (Array.isArray(lang_non_translated)) {
-      lang_non_translated = {}
     }
 
     return true
@@ -37,8 +33,8 @@ class ModulekitLang {
     var l;
     var non_translated_counted = false
 
-    if (this.lang_shall_count_translations() && str in lang_non_translated) {
-      lang_non_translated[str]++
+    if (this.lang_shall_count_translations() && str in this.lang_non_translated) {
+      this.lang_non_translated[str]++
       non_translated_counted = true
     }
 
@@ -78,10 +74,10 @@ class ModulekitLang {
       debug(str, "language string missing");
 
     if (this.lang_shall_count_translations() && !non_translated_counted) {
-      if (str in lang_non_translated) {
-        lang_non_translated[str]++
+      if (str in this.lang_non_translated) {
+        this.lang_non_translated[str]++
       } else {
-        lang_non_translated[str] = 1
+        this.lang_non_translated[str] = 1
       }
     }
 
@@ -250,6 +246,8 @@ class ModulekitLang {
             }
 
             this.lang_str = JSON.parse(body)
+            this.lang_non_translated = {}
+
             callback()
           }
         )
