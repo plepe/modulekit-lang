@@ -50,6 +50,9 @@ function checkModule (path, callback) {
     (done) => {
       fs.readFile(path + '/package.json', (err, mod) => {
         if (err) {
+          // ignore modules without package.json
+          if (err.code === 'ENOTDIR') { return done() }
+
           return done(err)
         }
 
