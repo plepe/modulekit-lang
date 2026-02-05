@@ -213,6 +213,10 @@ class ModulekitLang {
     return dom;
   }
 
+  is_translated (str) {
+    return !(str in this.lang_non_translated) && (str in this.lang_str)
+  }
+
   load (callback) {
     if (typeof global.ui_lang !== 'undefined' && global.ui_lang === this.language) {
       this.language = global.ui_lang
