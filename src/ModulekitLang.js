@@ -240,7 +240,7 @@ class ModulekitLang {
 
   lang_init2 (callback) {
     if (typeof this.lang_str === 'undefined') {
-      if (typeof fs !== 'undefined') {
+      if (typeof fs !== 'undefined' && fs.readFile) {
 
         fs.readFile(this.options.distPath + '/lang_' + this.language + '.json',
           (err, body) => {
