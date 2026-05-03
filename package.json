@@ -13,7 +13,6 @@
   "dependencies": {
     "argparse": "^1.0.10",
     "async": "^2.6.1",
-    "cldr": "^4.13.0",
     "modulekit-hooks": "^0.1.0",
     "sprintf-js": "^1.1.2"
   },
@@ -26,5 +25,8 @@
     "url": "https://github.com/plepe/modulekit-lang/issues"
   },
   "translationPath": "lang/",
-  "homepage": "https://github.com/plepe/modulekit-lang#readme"
+  "homepage": "https://github.com/plepe/modulekit-lang#readme",
+  "devDependencies": {
+    "cldr": "^8.0.0"
+  }
 }
